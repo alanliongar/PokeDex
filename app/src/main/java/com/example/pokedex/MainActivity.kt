@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
                     })
                 }
 
-// Monitora o estado de preenchimento da lista
+// Monitora o estado de preenchimento da lista tem pagode
                 val isPokemonListReady by remember {
                     derivedStateOf { pokemons.isNotEmpty() }
                 }
