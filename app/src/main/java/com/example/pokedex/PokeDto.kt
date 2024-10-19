@@ -1,17 +1,29 @@
 package com.example.pokedex
 
+import com.google.gson.annotations.SerializedName
+
 @kotlinx.serialization.Serializable
 data class PokeDto(
-    val name: String
-)
+    val name: String,
+    val weight: Int,
+    val height: Int,
+    @SerializedName("base_experience") val baseExperience: Int,
+    @SerializedName("stats") val baseStats: List<Stat>,
+    @SerializedName("types") val typesPok: List<TypeSlot>
+) {
+    data class Stat(
+        @SerializedName("base_stat") val baseStat: Int
+    )
 
-//https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/1.png
+    data class TypeSlot(
+        val slot: Int,
+        val type: Type
+    )
 
-//Proximo passo: verificar quais dados eu preciso pra detalhar o pokemon
-/*
-exemplo: Id 6
-        nome = charizard
-        tipo = fire e flying
-        infos: peso e altura
-        base stats: hp, atk, def, spd, exp*/
-//Em apenas um serviço, consigo tirar todas essas informações, será possível?
+    data class Type(
+        @SerializedName("name") val name: String
+    )
+
+}
+
+

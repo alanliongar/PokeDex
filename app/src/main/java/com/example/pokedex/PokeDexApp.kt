@@ -23,7 +23,7 @@ fun PokeDexApp(context: Context) {
             })
         ) { backStackEntry ->
             val pokeId = requireNotNull(backStackEntry.arguments?.getString("pokeId"))
-            PokeDetailScreen(pokeId)
+            PokeDetailScreen(pokeId, context = context)
         }
     }
 }

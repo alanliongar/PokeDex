@@ -40,8 +40,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
 import coil.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -289,7 +287,7 @@ private fun PokeTitleImage() {
     }
 }
 
-private fun getColorValue(context: Context, colorName: String): Int {
+fun getColorValue(context: Context, colorName: String): Int {
     val resources = context.resources
     return when (colorName) {
         "red" -> resources.getColor(R.color.red)
