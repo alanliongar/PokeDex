@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -113,8 +116,15 @@ fun PokeListScreen(context: Context, navController: NavHostController) {
                         if (idResponse.isSuccessful) {
                             val idBody = idResponse.body()
                             pokemon.id = idBody?.id
-                            pokemon.imageUrl =
-                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}" + ".png"
+
+                            pokemon.imageUrl = listOf(
+                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemon.id}.svg",
+                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png",
+                                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png"
+                            ).random()
+
+                            /*  pokemon.imageUrl =
+                                  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokemon.id}.png"*/
 
                             Log.d("Pokedexxx", "ID de ${pokemon.name}: ${pokemon.id}")
                         } else {
@@ -230,15 +240,26 @@ private fun PokeCard(
         if (isLoading) {
             CircularProgressIndicator()
         } else {
-            // Exibe a imagem do Pokémon
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = pokemon.name,
-                contentScale = ContentScale.Fit,  // Mantém a proporção original
-                modifier = Modifier
-                    .width(150.dp)  // Define a largura da imagem
-                    .height(150.dp) // Define a altura da imagem
-            )
+            if (imageUrl.endsWith(".svg")) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current).data(imageUrl)
+                        .decoderFactory(SvgDecoder.Factory()).build(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(150.dp),
+                    contentScale = ContentScale.Fit
+                )
+            } else {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = pokemon.name,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(150.dp)
+                )
+            }
         }
 
         // Espaço entre a imagem e o nome
@@ -308,3 +329,10 @@ fun getColorValue(context: Context, colorName: String): Int {
         else -> resources.getColor(R.color.black) // default color
     }
 }
+
+/*
+* A fazer ainda: colocar o botão pra carregar mais pokemons
+*
+*
+*
+* */

@@ -54,15 +54,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //enableEdgeToEdge()
-        setContent {
-            PokeDexTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color.White
-                ) {
-                    PokeDexApp(applicationContext)
-                }
-            }
-        }
+        setContent { PokeDexApp(applicationContext) }
     }
 }
