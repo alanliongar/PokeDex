@@ -26,3 +26,9 @@ interface PokeApiService {
     //Tarefa: quando puxar a lista, não pegar somente o nome do pokemon, puxar também seu devido ID
     //Parei nos 6:22 do vídeo "Organizando pacotes", revê-lo do começo.
 }
+
+
+interface PokeApiSService{
+
+
+}
