@@ -1,11 +1,10 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-android")
-    id("kotlin-parcelize")
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt")
+    id("kotlin-parcelize")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
-
 android {
     namespace = "com.example.pokedex"
     compileSdk = 34
@@ -43,7 +42,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     packaging {
         resources {
