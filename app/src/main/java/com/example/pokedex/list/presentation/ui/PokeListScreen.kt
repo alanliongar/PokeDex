@@ -89,6 +89,25 @@ private fun PokeListContent(
     }
 }
 
+@Composable
+private fun PokeGrid(
+    pokeListUiState: PokeListUiState,
+    onClick: (PokemonUiData) -> Unit
+) {
+    val listPokemonUiData = pokeListUiState.pokemonUiDataList
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(0.dp),
+        verticalArrangement = Arrangement.spacedBy(3.dp),
+        horizontalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        items(listPokemonUiData.size) { index ->
+            PokeCard(listPokemonUiData[index], onClick = onClick)
+        }
+    }
+}
+
 
 @Composable
 private fun PokeCard(
@@ -166,43 +185,6 @@ private fun PokeCard(
 }
 
 @Composable
-private fun PokeGrid(
-    pokeListUiState: PokeListUiState,
-    onClick: (PokemonUiData) -> Unit
-) {
-    val listPokemonUiData = pokeListUiState.pokemonUiDataList
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(0.dp),
-        verticalArrangement = Arrangement.spacedBy(3.dp),
-        horizontalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        items(listPokemonUiData.size) { index ->
-            PokeCard(listPokemonUiData[index], onClick = onClick)
-        }
-    }
-}
-
-@Composable
-private fun PokeTitleImage() {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.pokedex_logo),
-            contentDescription = "Imagem escrito Pokedex",
-            modifier = Modifier
-                .width(250.dp)
-                .height(90.dp),
-            contentScale = ContentScale.FillBounds
-        )
-    }
-}
-
-@Composable
 fun PokeErrorImage(errorMsg: String? = null) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -242,6 +224,22 @@ fun PokeErrorImage(errorMsg: String? = null) {
 }
 
 @Composable
+fun LoadingScreen() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.Center
+    ) {
+        Column {
+            GifImage(
+                modifier = Modifier.size(500.dp) // Tamanho do GIF
+            )
+        }
+    }
+}
+
+@Composable
 fun GifImage(
     modifier: Modifier = Modifier,
 ) {
@@ -267,24 +265,20 @@ fun GifImage(
     )
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun PokeListScreenPreview(modifier: Modifier = Modifier) {
-    GifImage()
-}
-
-@Composable
-fun LoadingScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
+private fun PokeTitleImage() {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column {
-            GifImage(
-                modifier = Modifier.size(500.dp) // Tamanho do GIF
-            )
-        }
+        Image(
+            painter = painterResource(id = R.drawable.pokedex_logo),
+            contentDescription = "Imagem escrito Pokedex",
+            modifier = Modifier
+                .width(250.dp)
+                .height(90.dp),
+            contentScale = ContentScale.FillBounds
+        )
     }
 }
