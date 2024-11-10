@@ -10,9 +10,9 @@ import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import coil.ImageLoader
 import coil.decode.SvgDecoder
-import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import androidx.palette.graphics.Target
 
 
 import com.example.pokedex.R
@@ -20,7 +20,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class CommonFunctions {
-    suspend fun getDominantColorFromImage(context: Context, imageUrl: String?): Color? {
+    suspend fun getDominantColorFromImage(
+        context: Context,
+        imageUrl: String?,
+        index: Int = 1,
+        target: Int = 1,
+        alpha: Double = 1.0,
+    ): Color? {
         return withContext(Dispatchers.IO) {
             val imageLoader = ImageLoader(context)
             val request = if (imageUrl?.takeLast(3) == "svg") {
@@ -41,10 +47,32 @@ class CommonFunctions {
                     val bitmap = result.bitmap
                     // Verifica se o bitmap é do tipo HARDWARE e converte se necessário
                     val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-
+                    val stdColor = Color.Transparent.toArgb()
                     val palette = Palette.from(mutableBitmap).generate()
-                    val dominantColor = palette.getDominantColor(Color.Black.toArgb())
-                    Color(dominantColor).copy(alpha = 0.70f)
+                    val targets = arrayOf(
+                        Target.LIGHT_VIBRANT,
+                        Target.VIBRANT,
+                        Target.MUTED,
+                        Target.DARK_MUTED,
+                        Target.DARK_VIBRANT
+                    )
+
+                    val selectedColor: Int = when (index) {
+                        1 -> palette.getDominantColor(stdColor)
+                        2 -> palette.getVibrantColor(stdColor)
+                        3 -> palette.getMutedColor(stdColor)
+                        4 -> palette.getDarkMutedColor(stdColor)
+                        5 -> palette.getDarkVibrantColor(stdColor)
+                        6 -> palette.getLightMutedColor(stdColor)
+                        7 -> palette.getLightVibrantColor(stdColor)
+                        8 -> palette.getColorForTarget(targets[target - 1], stdColor)
+                        9 -> palette.getSwatchForTarget(targets[target - 1])?.rgb ?: stdColor
+                        else -> stdColor // Retorna a cor padrão caso o índice não seja válido
+                    }
+
+                    val colorWithAlpha = Color(selectedColor).copy(alpha.toFloat())
+                    colorWithAlpha
+
                 } else {
                     null
                 }

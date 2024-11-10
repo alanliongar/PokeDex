@@ -11,13 +11,10 @@ import com.example.pokedex.common.data.remote.model.CommonFunctions
 import com.example.pokedex.detail.data.PokeDetailService
 import com.example.pokedex.detail.presentation.ui.PokemonDetailUiState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 class PokeDetailViewModel(
     private val pokeDetailService: PokeDetailService, private val context: Context

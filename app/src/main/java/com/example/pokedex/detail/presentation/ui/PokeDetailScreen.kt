@@ -82,9 +82,7 @@ private fun PokeDetailContent(
 
         pokemonDetailUiState.isError -> {
             PokeErrorImage()
-        }
-
-        else -> {
+        }else -> {
             Box(
                 modifier = Modifier
                     .background(color)
