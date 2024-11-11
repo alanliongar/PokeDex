@@ -72,6 +72,7 @@ private fun PokeDetailContent(
     context: Context
 ) {
     val color = pokemonDetailUiState.color ?: Color.Transparent
+    val textColor = pokemonDetailUiState.textColor
     val pokemon = pokemonDetailUiState.PokeDetail
     val pokeImg = pokemonDetailUiState.image
 
@@ -82,7 +83,9 @@ private fun PokeDetailContent(
 
         pokemonDetailUiState.isError -> {
             PokeErrorImage()
-        }else -> {
+        }
+
+        else -> {
             Box(
                 modifier = Modifier
                     .background(color)
@@ -99,12 +102,12 @@ private fun PokeDetailContent(
                         text = pokemon?.name.orEmpty()
                             .replaceFirstChar { it.uppercase() },
                         fontSize = 36.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold, color = textColor ?: Color.Black
                     )
                     Text(
                         text = "#${pokemon?.pokeId.toString()?.padStart(4, '0')}",
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Bold, color = textColor ?: Color.Black,
                         modifier = Modifier.padding(8.dp)
                     )
 
@@ -149,7 +152,8 @@ private fun PokeDetailContent(
                                     Text(
                                         text = typeSlot.type.name,
                                         fontSize = 20.sp,
-                                        fontWeight = FontWeight.SemiBold
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = textColor ?: Color.Black
                                     )
                                 }
                                 if (index < types.size - 1) {
@@ -174,9 +178,11 @@ private fun PokeDetailContent(
                         ) {
                             Text(
                                 text = "${((pokemon?.weight ?: 0) / 10.0)} KG",
-                                fontSize = 24.sp, fontWeight = FontWeight.SemiBold
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = textColor ?: Color.Black
                             )
-                            Text(text = "Weight")
+                            Text(text = "Weight", color = textColor ?: Color.Black)
                         }
                         Column(
                             modifier = Modifier.padding(start = 16.dp),
@@ -184,9 +190,11 @@ private fun PokeDetailContent(
                         ) {
                             Text(
                                 text = "${((pokemon?.height ?: 0) / 10.0)} M",
-                                fontSize = 24.sp, fontWeight = FontWeight.SemiBold
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = textColor ?: Color.Black
                             )
-                            Text(text = "Height")
+                            Text(text = "Height", color = textColor ?: Color.Black)
                         }
                     }
 
@@ -203,13 +211,14 @@ private fun PokeDetailContent(
                         "XP" to (pokemon?.baseExperience ?: 0)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Base Stats", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                    Text(text = "Base Stats", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = textColor ?: Color.Black)
                     Spacer(modifier = Modifier.height(8.dp))
 
                     stats.forEach { (name, value) ->
                         StatBar(
                             statName = name,
                             currentValue = value,
+                            textColor = textColor?:Color.Black,
                             color = CommonFunctions().getBarColor(name, context),
                             maxValue = if (name == "XP") 1000 else 300
                         )
@@ -221,7 +230,7 @@ private fun PokeDetailContent(
 }
 
 @Composable
-private fun StatBar(statName: String, currentValue: Int, color: Color, maxValue: Int) {
+private fun StatBar(statName: String, currentValue: Int, color: Color, maxValue: Int, textColor: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -235,7 +244,7 @@ private fun StatBar(statName: String, currentValue: Int, color: Color, maxValue:
         ) {
             Text(
                 text = statName,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold, color=textColor
             )
         }
 
@@ -259,7 +268,7 @@ private fun StatBar(statName: String, currentValue: Int, color: Color, maxValue:
 
             Text(
                 text = "$currentValue / $maxValue",
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
+                style = MaterialTheme.typography.bodyMedium.copy(color = textColor),
                 modifier = Modifier.align(Alignment.Center), fontWeight = FontWeight.Bold
             )
         }

@@ -7,6 +7,7 @@ data class PokemonDetailUiState(
     val PokeDetail: PokeDto? = null,
     val isLoading: Boolean = false,
     val isError: Boolean = false,
-    val color: Color? = null,
+    var color: Color? = null,
+    var textColor: Color? = Color.Black,
     val image: String = ""
 )

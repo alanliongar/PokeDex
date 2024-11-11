@@ -48,7 +48,7 @@ class PokeListViewModel(
                             color = CommonFunctions().getDominantColorFromImage(
                                 context,
                                 PokeListDto.image
-                            )
+                            ).first
                         )
                     }
                     _uiPokemonsList.value =
