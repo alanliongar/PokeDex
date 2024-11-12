@@ -66,7 +66,7 @@ fun PokeListScreen(
         navController.navigate("pokemonDetail/${pokeItemClicked.id}")
     }
 }
-
+//2h estudadas
 @Composable
 private fun PokeListContent(
     pokeListUiState: PokeListUiState,
