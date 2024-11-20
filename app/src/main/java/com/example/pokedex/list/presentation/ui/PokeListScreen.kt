@@ -48,7 +48,6 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import coil.size.Scale
 import coil.size.Size
 import com.example.pokedex.R
 import com.example.pokedex.common.data.remote.model.CommonFunctions
@@ -67,7 +66,7 @@ fun PokeListScreen(
         navController.navigate("pokemonDetail/${pokeItemClicked.id}")
     }
 }
-
+//2h estudadas
 @Composable
 private fun PokeListContent(
     pokeListUiState: PokeListUiState,
@@ -129,24 +128,16 @@ private fun PokeCard(
     LaunchedEffect(pokemonUiData) {
         isLoading = true
         pokemonUiData.imageUrl?.let { imageUrl = it }
-        val dominantCardColor = CommonFunctions().getDominantColorFromImage(
+        val dominantColorCardAndText = CommonFunctions().getDominantColorFromImage(
             context, imageUrl,
             //VALORES DO CARD
             index = 1, //Métodó da paleta
             target = 1,//métodó do target
-            alpha = 0.69//transparencia
+            alpha = 0.7//transparencia
             //VALORES DO CARD
         )
-        val dominantTextColor = CommonFunctions().getDominantColorFromImage(
-            context, imageUrl,
-            //VALORES DO TEXTO
-            index = 9,//Métodó da paleta - 1 a 9, 8 e 9 variando
-            target = 5,//metodó do target - 1 a 5
-            alpha = 1.5//transparencia
-            //VALORES DO TEXTO
-        )
-        textCardColor = dominantTextColor ?: pokemonUiData.color ?: Color.Gray
-        cardColor = dominantCardColor ?: pokemonUiData.color ?: Color.Gray
+        textCardColor = dominantColorCardAndText.second ?: pokemonUiData.color ?: Color.Gray
+        cardColor = dominantColorCardAndText.first ?: pokemonUiData.color ?: Color.Gray
         isLoading = false
     }
     Column(
@@ -271,7 +262,7 @@ fun GifImage(
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
         .components {
-            if (SDK_INT >= 30) {
+            if (SDK_INT >= 28) {
                 add(ImageDecoderDecoder.Factory())
             } else {
                 add(GifDecoder.Factory())

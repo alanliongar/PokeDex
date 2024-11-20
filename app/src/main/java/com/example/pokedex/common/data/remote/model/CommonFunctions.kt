@@ -18,6 +18,8 @@ import androidx.palette.graphics.Target
 import com.example.pokedex.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.math.pow
+import kotlin.math.round
 
 class CommonFunctions {
     suspend fun getDominantColorFromImage(
@@ -26,7 +28,7 @@ class CommonFunctions {
         index: Int = 1,
         target: Int = 1,
         alpha: Double = 1.0,
-    ): Color? {
+    ): Pair<Color?, Color?> {
         return withContext(Dispatchers.IO) {
             val imageLoader = ImageLoader(context)
             val request = if (imageUrl?.takeLast(3) == "svg") {
@@ -47,8 +49,10 @@ class CommonFunctions {
                     val bitmap = result.bitmap
                     // Verifica se o bitmap é do tipo HARDWARE e converte se necessário
                     val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-                    val stdColor = Color.Transparent.toArgb()
+                    val stdBlackColor = Color.Black.toArgb()
+                    val stdWhiteColor = Color.White.toArgb()
                     val palette = Palette.from(mutableBitmap).generate()
+
                     val targets = arrayOf(
                         Target.LIGHT_VIBRANT,
                         Target.VIBRANT,
@@ -58,29 +62,47 @@ class CommonFunctions {
                     )
 
                     val selectedColor: Int = when (index) {
-                        1 -> palette.getDominantColor(stdColor)
-                        2 -> palette.getVibrantColor(stdColor)
-                        3 -> palette.getMutedColor(stdColor)
-                        4 -> palette.getDarkMutedColor(stdColor)
-                        5 -> palette.getDarkVibrantColor(stdColor)
-                        6 -> palette.getLightMutedColor(stdColor)
-                        7 -> palette.getLightVibrantColor(stdColor)
-                        8 -> palette.getColorForTarget(targets[target - 1], stdColor)
-                        9 -> palette.getSwatchForTarget(targets[target - 1])?.rgb ?: stdColor
-                        else -> stdColor // Retorna a cor padrão caso o índice não seja válido
+                        1 -> palette.getDominantColor(stdBlackColor)
+                        2 -> palette.getVibrantColor(stdBlackColor)
+                        3 -> palette.getMutedColor(stdBlackColor)
+                        4 -> palette.getDarkMutedColor(stdBlackColor)
+                        5 -> palette.getDarkVibrantColor(stdBlackColor)
+                        6 -> palette.getLightMutedColor(stdBlackColor)
+                        7 -> palette.getLightVibrantColor(stdBlackColor)
+                        8 -> palette.getColorForTarget(targets[target - 1], stdBlackColor)
+                        9 -> palette.getSwatchForTarget(targets[target - 1])?.rgb ?: stdBlackColor
+                        else -> stdBlackColor // Retorna a cor padrão caso o índice não seja válido
                     }
 
                     val colorWithAlpha = Color(selectedColor).copy(alpha.toFloat())
-                    colorWithAlpha
+                    val backgroundColorLuminance = calculateLuminance(colorWithAlpha)
+                    var textColorAlphared = if (backgroundColorLuminance > 0.5) {
+                        Color(palette.getSwatchForTarget(targets[5 - 1])?.rgb ?: stdBlackColor)
+                    } else {
+                        Color(palette.getSwatchForTarget(targets[1 - 1])?.rgb ?: stdWhiteColor)
+                    }
+                    if (colorWithAlpha == textColorAlphared) {
+                        textColorAlphared = Color.Black
+                    }
+//                    textColorAlphared = Color.Black
+                    Pair(colorWithAlpha, textColorAlphared)
 
                 } else {
-                    null
+                    Pair(null, null)
                 }
             } catch (e: Exception) {
                 Log.e("PokeListViewModel", "Erro ao obter cor da imagem: ${e.message}")
-                null
+                Pair(null, null)
             }
         }
+    }
+
+    private fun getNegativeColor(color: Color): Color {
+        val red = 255 - (color.red * 255).toInt()
+        val green = 255 - (color.green * 255).toInt()
+        val blue = 255 - (color.blue * 255).toInt()
+
+        return Color(red / 255f, green / 255f, blue / 255f, color.alpha)
     }
 
     fun getRandomPokeImg(pokeId: Int): String {
@@ -162,5 +184,20 @@ class CommonFunctions {
             "type_fairy" -> Color(0xFFD685AD) // 45% opacidade
             else -> Color.Black // Default
         }
+    }
+
+    private fun calculateLuminance(color: Color): Double {
+        // Converte os componentes da cor para o intervalo de 0 a 1
+        val r = color.red
+        val g = color.green
+        val b = color.blue
+
+        // Aplica a transformação para cada componente
+        val rLuminance = if (r <= 0.03928) r / 12.92 else ((r + 0.055) / 1.055).pow(2.4)
+        val gLuminance = if (g <= 0.03928) g / 12.92 else ((g + 0.055) / 1.055).pow(2.4)
+        val bLuminance = if (b <= 0.03928) b / 12.92 else ((b + 0.055) / 1.055).pow(2.4)
+
+        // Calcula a luminância relativa (percebida)
+        return round((0.2126 * rLuminance + 0.7152 * gLuminance + 0.0722 * bLuminance) * 100) / 100.0
     }
 }

@@ -22,7 +22,7 @@ class PokeListRemoteDataSource(
                         color = CommonFunctions().getDominantColorFromImage(
                             context,
                             it.pokeImgUrl
-                        )?.value?.toInt() ?: Color.Red.value.toInt()
+                        ).first?.value?.toInt() ?: Color.Red.value.toInt()
                     )
                 }
                 if (pokemons != null) {

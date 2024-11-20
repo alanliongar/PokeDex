@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 class PokeDetailViewModel(
     private val pokeDetailService: PokeDetailService, private val context: Context
 ) : ViewModel() {
-    private val _uiPokeDto = MutableStateFlow<PokemonDetailUiState>(PokemonDetailUiState())
+    private val _uiPokeDto = MutableStateFlow(PokemonDetailUiState())
     val uiPokeDto: StateFlow<PokemonDetailUiState> = _uiPokeDto
 
     fun setImageAndColor(image: String) {
@@ -27,7 +27,9 @@ class PokeDetailViewModel(
             _uiPokeDto.value = _uiPokeDto.value.copy(
                 image = image, color = CommonFunctions().getDominantColorFromImage(
                     context, image
-                )
+                ).first, textColor = CommonFunctions().getDominantColorFromImage(
+                    context, image
+                ).second
             )
         }
     }
@@ -42,10 +44,12 @@ class PokeDetailViewModel(
                         val body = pokeDetail.body()
                         if (body != null) {
                             val img = CommonFunctions().getRandomPokeImg(pokeId)
-                            val color = CommonFunctions().getDominantColorFromImage(context, img)
+                            val color = CommonFunctions().getDominantColorFromImage(context, img).first
+                            val textColor = CommonFunctions().getDominantColorFromImage(context, img).second
                             _uiPokeDto.value = PokemonDetailUiState(
                                 PokeDetail = body,
                                 color = color,
+                                textColor = textColor,
                                 image = img
                             )
                         } else {
@@ -68,47 +72,6 @@ class PokeDetailViewModel(
                 _uiPokeDto.value = _uiPokeDto.value.copy(isLoading = false)
             }
         }
-
-        // Código antigo
-        /*if (pokeId != null) {
-            viewModelScope.launch(Dispatchers.IO) {
-                _uiPokeDto.value = PokemonDetailUiState(isLoading = true)
-                try {
-                    val pokeDetail = pokeDetailService.getPokemonDetail(pokeId)
-                    if (pokeDetail.isSuccessful) {
-                        val body = pokeDetail.body()
-                        if (body != null) {
-                            _uiPokeDto.value =
-                                _uiPokeDto.value.copy(
-                                    PokeDetail = body,
-                                    isLoading = false,
-                                    isError = false
-                                )
-                            val img = _uiPokeDto.value.image
-                            setImageAndColor(img)
-                        } else {
-                            _uiPokeDto.value = PokemonDetailUiState(isError = true)
-                        }
-                    } else {
-                        _uiPokeDto.value = PokemonDetailUiState(isError = true)
-                        Log.e(
-                            "PokeDetailViewModel",
-                            "Erro ao buscar Detalhe do pokemon id ${pokeId}: ${
-                                pokeDetail.errorBody()?.string()
-                            }"
-                        )
-                    }
-                } catch (ex: Exception) {
-                    Log.e("PokeDetailViewModel", "Exception: ${ex.message}")
-                    _uiPokeDto.value = PokemonDetailUiState(isError = true)
-                } finally {
-                    _uiPokeDto.value = _uiPokeDto.value.copy(isLoading = false)
-                }
-            }
-        } else {
-            //Erro quando nao consigo um ID válido
-            _uiPokeDto.value = _uiPokeDto.value.copy(isLoading = false, isError = true)
-        }*/
     }
 
     fun clearState() {
