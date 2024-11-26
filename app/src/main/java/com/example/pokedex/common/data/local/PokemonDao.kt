@@ -15,4 +15,7 @@ interface PokemonDao {
 
     @Query("SELECT * FROM pokemonentity")
     fun getAllPokemons(): List<PokemonEntity>
+
+    @Query("SELECT * FROM PokemonEntity WHERE name = :name")
+    fun getPokemonByName(name: String): PokemonEntity?
 }

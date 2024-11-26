@@ -18,8 +18,11 @@ import androidx.palette.graphics.Target
 import com.example.pokedex.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.security.SecureRandom
 import kotlin.math.pow
 import kotlin.math.round
+import kotlin.random.Random
 
 class CommonFunctions {
     suspend fun getDominantColorFromImage(
@@ -27,7 +30,6 @@ class CommonFunctions {
         imageUrl: String?,
         index: Int = 1,
         target: Int = 1,
-        alpha: Double = 1.0,
     ): Pair<Color?, Color?> {
         return withContext(Dispatchers.IO) {
             val imageLoader = ImageLoader(context)
@@ -42,15 +44,12 @@ class CommonFunctions {
                     .build()
             }
 
-//            model = ImageRequest.Builder(LocalContext.current).data(imageUrl).decoderFactory(SvgDecoder.Factory()).build()
             return@withContext try {
                 val result = (imageLoader.execute(request) as SuccessResult).drawable
                 if (result is BitmapDrawable) {
                     val bitmap = result.bitmap
-                    // Verifica se o bitmap é do tipo HARDWARE e converte se necessário
                     val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-                    val stdBlackColor = Color.Black.toArgb()
-                    val stdWhiteColor = Color.White.toArgb()
+                    val rndColor = getRandomColor().toArgb()
                     val palette = Palette.from(mutableBitmap).generate()
 
                     val targets = arrayOf(
@@ -61,40 +60,119 @@ class CommonFunctions {
                         Target.DARK_VIBRANT
                     )
 
+                    val validTarget = targets.getOrNull(target - 1) ?: Target.VIBRANT
+
                     val selectedColor: Int = when (index) {
-                        1 -> palette.getDominantColor(stdBlackColor)
-                        2 -> palette.getVibrantColor(stdBlackColor)
-                        3 -> palette.getMutedColor(stdBlackColor)
-                        4 -> palette.getDarkMutedColor(stdBlackColor)
-                        5 -> palette.getDarkVibrantColor(stdBlackColor)
-                        6 -> palette.getLightMutedColor(stdBlackColor)
-                        7 -> palette.getLightVibrantColor(stdBlackColor)
-                        8 -> palette.getColorForTarget(targets[target - 1], stdBlackColor)
-                        9 -> palette.getSwatchForTarget(targets[target - 1])?.rgb ?: stdBlackColor
-                        else -> stdBlackColor // Retorna a cor padrão caso o índice não seja válido
+                        1 -> palette.getDominantColor(rndColor)
+                        2 -> palette.getVibrantColor(rndColor)
+                        3 -> palette.getMutedColor(rndColor)
+                        4 -> palette.getDarkMutedColor(rndColor)
+                        5 -> palette.getDarkVibrantColor(rndColor)
+                        6 -> palette.getLightMutedColor(rndColor)
+                        7 -> palette.getLightVibrantColor(rndColor)
+                        8 -> palette.getColorForTarget(targets[target - 1], rndColor)
+                        9 -> palette.getSwatchForTarget(targets[target - 1])?.rgb ?: rndColor
+                        else -> palette.getColorForTarget(
+                            validTarget,
+                            rndColor
+                        )
                     }
 
-                    val colorWithAlpha = Color(selectedColor).copy(alpha.toFloat())
-                    val backgroundColorLuminance = calculateLuminance(colorWithAlpha)
-                    var textColorAlphared = if (backgroundColorLuminance > 0.5) {
-                        Color(palette.getSwatchForTarget(targets[5 - 1])?.rgb ?: stdBlackColor)
-                    } else {
-                        Color(palette.getSwatchForTarget(targets[1 - 1])?.rgb ?: stdWhiteColor)
+                    var textColorAlphared: Color
+                    var valid = true
+                    var textIndex = 1
+                    var textTarget: Int
+                    textColorAlphared = Color.Black
+                    val colorWithAlpha = Color(selectedColor).copy(1.0f)
+                    while (textIndex < 10 && valid) {
+                        textTarget = 1
+                        while (textTarget < 6 && valid) {
+                            textColorAlphared = when (textIndex) {
+                                1 -> Color(palette.getDominantColor(rndColor))
+                                2 -> Color(palette.getVibrantColor(rndColor))
+                                3 -> Color(palette.getMutedColor(rndColor))
+                                4 -> Color(palette.getDarkMutedColor(rndColor))
+                                5 -> Color(palette.getDarkVibrantColor(rndColor))
+                                6 -> Color(palette.getLightMutedColor(rndColor))
+                                7 -> Color(palette.getLightVibrantColor(rndColor))
+                                8 -> Color(
+                                    palette.getColorForTarget(
+                                        targets[textTarget - 1],
+                                        rndColor
+                                    )
+                                )
+
+                                9 -> Color(
+                                    palette.getSwatchForTarget(targets[textTarget - 1])?.rgb
+                                        ?: rndColor
+                                )
+
+                                else -> Color(
+                                    palette.getColorForTarget(
+                                        validTarget,
+                                        Color.Black.toArgb()
+                                    )
+                                )
+                            }
+                            if (calculateContrast(
+                                    textColorAlphared.toArgb(),
+                                    colorWithAlpha.toArgb()
+                                ) >= 4.5f
+                            ) {
+                                valid = false
+                            }
+                            textTarget++
+                        }
+                        textIndex++
                     }
-                    if (colorWithAlpha == textColorAlphared) {
-                        textColorAlphared = Color.Black
+                    if (calculateContrast(
+                            textColorAlphared.toArgb(),
+                            colorWithAlpha.toArgb()
+                        ) < 4.5f
+                    ) {
+                        val pokemonId = imageUrl?.split("/")?.last { it.isNotEmpty() }
+                        Log.w(
+                            "Contraste Baixo",
+                            "Contraste baixo encontrado, aplicando negativo na img ${pokemonId}"
+                        )
+                        textColorAlphared = getNegativeColor(textColorAlphared)
                     }
-//                    textColorAlphared = Color.Black
                     Pair(colorWithAlpha, textColorAlphared)
-
                 } else {
                     Pair(null, null)
                 }
+
             } catch (e: Exception) {
                 Log.e("PokeListViewModel", "Erro ao obter cor da imagem: ${e.message}")
                 Pair(null, null)
             }
         }
+    }
+
+    fun inequalRandom(): Int {
+        val chance = (0..99).random() // Número entre 0 e 99
+        return if (chance < 90) { // 80% de chance
+            (1..3).random()
+        } else { // 20% de chance
+            (4..9).random()
+        }
+    }
+
+    fun calculateOffset(page: Int): Int {
+        val limit = 12
+        if (page >= 1) {
+            return ((page - 1) * limit)
+        } else {
+            return 0
+        }
+    }
+
+    private fun calculateContrast(foreground: Int, background: Int): Double {
+        val luminance1 = calculateLuminance(Color(foreground))
+        val luminance2 = calculateLuminance(Color(background))
+        val lighter = maxOf(luminance1, luminance2)
+        val darker = minOf(luminance1, luminance2)
+        return (lighter + 0.00005) / (darker + 0.00005)
     }
 
     private fun getNegativeColor(color: Color): Color {
@@ -113,6 +191,45 @@ class CommonFunctions {
         )
         return urls.random()
     }
+
+    fun generateUniqueFileName(): String {
+        val random = SecureRandom()
+        val randomValue = random.nextInt(999999) // Valor aleatório entre 0 e 999999
+        return "img_${System.currentTimeMillis()}_$randomValue.png"
+    }
+
+
+    suspend fun downloadAndSaveImageWithCoil(context: Context, imageUrl: String): String {
+        // Cria um nome único para o arquivo
+        val fileName = generateUniqueFileName()
+        val file = File(context.cacheDir, fileName)
+
+        val imageLoader = ImageLoader(context)
+        val request = if (imageUrl.takeLast(3) == "svg") {
+            ImageRequest.Builder(context)
+                .data(imageUrl)
+                .decoderFactory(SvgDecoder.Factory()) // SVG usa decoder específico
+                .allowHardware(false)
+                .build()
+        } else {
+            ImageRequest.Builder(context)
+                .data(imageUrl)
+                .allowHardware(false)
+                .build()
+        }
+
+        val result = (imageLoader.execute(request) as SuccessResult).drawable
+        file.outputStream().use { outputStream ->
+            (result as android.graphics.drawable.BitmapDrawable).bitmap.compress(
+                android.graphics.Bitmap.CompressFormat.PNG,
+                100,
+                outputStream
+            )
+        }
+
+        return file.absolutePath // Retorna o caminho local da imagem salva
+    }
+
 
     fun getTypeColor(type: String, context: Context): Color {
         return when (type) {
@@ -148,42 +265,18 @@ class CommonFunctions {
         }
     }
 
-    fun getColorByName(colorName: String): Color {
-        return when (colorName.lowercase()) {
-            "blue" -> Color(0x731E88E5)   // 45% opacidade
-            "brown" -> Color(0x738D6E63)  // 45% opacidade
-            "gray" -> Color(0x739E9E9E)   // 45% opacidade
-            "green" -> Color(0x7366BB6A)  // 45% opacidade
-            "pink" -> Color(0x73F48FB1)    // 45% opacidade
-            "purple" -> Color(0x73AB47BC)  // 45% opacidade
-            "red" -> Color(0x73E53935)     // 45% opacidade
-            "white" -> Color(0x73FAFAFA)   // 45% opacidade
-            "yellow" -> Color(0x73FFEB3B)  // 45% opacidade
-            "hp_bar" -> Color(0xFF368F3B)  // 45% opacidade
-            "atk_bar" -> Color(0xFFD83948) // 45% opacidade
-            "def_bar" -> Color(0xFF0292F2) // 45% opacidade
-            "exp_bar" -> Color(0xFFFFA527)  // 45% opacidade
-            "spd_bar" -> Color(0xFF8DAFC8)  // 45% opacidade
-            "type_normal" -> Color(0xFFA8A77A) // 45% opacidade
-            "type_fire" -> Color(0xFFFF7F27) // 45% opacidade
-            "type_water" -> Color(0xFF6390F0) // 45% opacidade
-            "type_grass" -> Color(0xFF7AC74C) // 45% opacidade
-            "type_electric" -> Color(0xFFF7D02C) // 45% opacidade
-            "type_ice" -> Color(0xFF96D9D6) // 45% opacidade
-            "type_fighting" -> Color(0xFFC22E28) // 45% opacidade
-            "type_poison" -> Color(0xFFA33EA1) // 45% opacidade
-            "type_ground" -> Color(0xFFE2BF65) // 45% opacidade
-            "type_flying" -> Color(0xFFA98FF3) // 45% opacidade
-            "type_psychic" -> Color(0xFFF95587) // 45% opacidade
-            "type_bug" -> Color(0xFFA6B91A) // 45% opacidade
-            "type_rock" -> Color(0xFFB6A136) // 45% opacidade
-            "type_ghost" -> Color(0xFF735797) // 45% opacidade
-            "type_dragon" -> Color(0xFF6F35FC) // 45% opacidade
-            "type_dark" -> Color(0xFF705746) // 45% opacidade
-            "type_steel" -> Color(0xFFB7B7CE) // 45% opacidade
-            "type_fairy" -> Color(0xFFD685AD) // 45% opacidade
-            else -> Color.Black // Default
+    private fun getRandomColor(): Color {
+        var red: Int = 0
+        var green: Int = 0
+        var blue: Int = 0
+        var luminance: Double = 1.0
+        while (luminance > 0.5) {
+            red = Random.nextInt(0, 128) // Valor entre 0 e 255
+            green = Random.nextInt(0, 128)
+            blue = Random.nextInt(0, 128)
+            luminance = calculateLuminance(Color(red, green, blue))
         }
+        return Color(red, green, blue)
     }
 
     private fun calculateLuminance(color: Color): Double {

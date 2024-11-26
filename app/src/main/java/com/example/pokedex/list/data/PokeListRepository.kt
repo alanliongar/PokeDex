@@ -1,6 +1,7 @@
 package com.example.pokedex.list.data
 
 import android.accounts.NetworkErrorException
+import android.content.Context
 import com.example.pokedex.common.data.model.Pokemon
 import com.example.pokedex.list.data.local.PokeListLocalDataSource
 import com.example.pokedex.list.data.remote.PokeListRemoteDataSource
@@ -8,15 +9,15 @@ import com.example.pokedex.list.data.remote.PokeListRemoteDataSource
 
 class PokeListRepository(
     private val local: PokeListLocalDataSource,
-    private val remote: PokeListRemoteDataSource,
+    private val remote: PokeListRemoteDataSource
 ) {
-    suspend fun getPokeList(): Result<List<Pokemon>?> {
+    suspend fun getPokeList(context: Context, page: Int): Result<List<Pokemon>?> {
         return try {
-            val result = remote.getPokeList()
+            val result = remote.getPokeList(context = context, page = page)
             if (result.isSuccess) {
                 val pokemonResponse = result.getOrNull() ?: emptyList()
                 if (pokemonResponse.isNotEmpty()) {
-                    local.updateLocalPokemonsList(pokemonResponse)
+                    local.updateLocalPokemonsList(pokemons = pokemonResponse, context = context)
                     return@getPokeList Result.success(local.getPokemonList())
                 } else { //a chamada foi um sucesso, mas o resultado veio vazio.
                     val localData = local.getPokemonList()

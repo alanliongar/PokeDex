@@ -24,14 +24,4 @@ data class PokeDto( //essa é uma resposta de DETALHE, ela retorna um elemento d
     data class Type(
         @SerializedName("name") var name: String
     )
-
-    val pokeImg: String
-        get() {
-            val urls = listOf(
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokeId}.svg",
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeId}.png",
-                "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${pokeId}.png"
-            )
-            return urls.random()
-        }
 }

@@ -23,6 +23,7 @@ class PokeListViewModel(
     private val repository: PokeListRepository,
     private val context: Context
 ) : ViewModel() {
+    private var currentPage: Int = 1
     private val _uiPokemonsList = MutableStateFlow<PokeListUiState>(PokeListUiState())
     val uiPokemonsList: StateFlow<PokeListUiState> = _uiPokemonsList
 
@@ -31,23 +32,28 @@ class PokeListViewModel(
         fetchPokemonList()
     }
 
+    fun loadMorePokemons() {
+        fetchPokemonList()
+    }
+
     private fun fetchPokemonList() {
         _uiPokemonsList.value = PokeListUiState(isLoading = true)
         viewModelScope.launch(Dispatchers.IO) {
-
-            val response = repository.getPokeList()
+            val response = repository.getPokeList(context = context, page = currentPage)
             if (response.isSuccess) {
+                currentPage++
                 //_uiPokemonsList.value = emptyList() //Não precisa do equivalente nesse caso, pq a lista default ja é vazia
                 val pokemonResponse = response.getOrNull()
                 if (pokemonResponse != null) {
                     val pokeUiDataList = pokemonResponse.map { PokeListDto ->
+                        val pokeImgRand = PokeListDto.image.random()
                         PokemonUiData(
                             name = PokeListDto.name,
                             id = PokeListDto.id,
-                            imageUrl = PokeListDto.image,
+                            imageUrl = pokeImgRand,
                             color = CommonFunctions().getDominantColorFromImage(
                                 context,
-                                PokeListDto.image
+                                pokeImgRand
                             ).first
                         )
                     }

@@ -9,6 +9,8 @@ data class PokemonEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val name: String,
-    val image: String,
+    val image1: String,
+    val image2: String,
+    val image3: String,
     val color: Int,
 )

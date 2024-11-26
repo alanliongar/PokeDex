@@ -44,8 +44,12 @@ class PokeDetailViewModel(
                         val body = pokeDetail.body()
                         if (body != null) {
                             val img = CommonFunctions().getRandomPokeImg(pokeId)
-                            val color = CommonFunctions().getDominantColorFromImage(context, img).first
-                            val textColor = CommonFunctions().getDominantColorFromImage(context, img).second
+                            val baseColor = CommonFunctions().getDominantColorFromImage(
+                                context, imageUrl = img, index = CommonFunctions().inequalRandom(),
+                                target = (1..5).random()
+                            )
+                            val color = baseColor.first
+                            val textColor = baseColor.second
                             _uiPokeDto.value = PokemonDetailUiState(
                                 PokeDetail = body,
                                 color = color,

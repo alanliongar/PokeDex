@@ -17,9 +17,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,18 +63,19 @@ fun PokeListScreen(
     pokeListViewModel: PokeListViewModel,
 ) {
     val pokemons by pokeListViewModel.uiPokemonsList.collectAsState()
-
     PokeListContent(
-        pokeListUiState = pokemons
-    ) { pokeItemClicked ->
-        navController.navigate("pokemonDetail/${pokeItemClicked.id}")
-    }
+        pokeListUiState = pokemons,
+        onLoadMoreClick = { pokeListViewModel.loadMorePokemons() },
+        onClick = { pokeItemClicked ->
+            navController.navigate("pokemonDetail/${pokeItemClicked.id}")
+        })
 }
-//2h estudadas
+
 @Composable
 private fun PokeListContent(
     pokeListUiState: PokeListUiState,
-    onClick: (PokemonUiData) -> Unit
+    onClick: (PokemonUiData) -> Unit,
+    onLoadMoreClick: () -> Unit
 ) {
     val isLoading = pokeListUiState.isLoading
     val isError = pokeListUiState.isError
@@ -82,32 +87,54 @@ private fun PokeListContent(
     ) {
         if (isError) {
             PokeErrorImage(errorMessage)
-
         } else if (isLoading) {
             PokeTitleImage()
             LoadingScreen()
         } else {
             PokeTitleImage()
-            PokeGrid(pokeListUiState = pokeListUiState, onClick = onClick)
+            PokeGridWithFullWidthButton(
+                pokeListUiState = pokeListUiState,
+                onCardClick = onClick,
+                onLoadMoreClick = onLoadMoreClick
+            )
         }
     }
 }
 
 @Composable
-private fun PokeGrid(
+fun PokeGridWithFullWidthButton(
     pokeListUiState: PokeListUiState,
-    onClick: (PokemonUiData) -> Unit
+    onCardClick: (PokemonUiData) -> Unit,
+    onLoadMoreClick: () -> Unit
 ) {
-    val listPokemonUiData = pokeListUiState.pokemonUiDataList
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(0.dp),
-        verticalArrangement = Arrangement.spacedBy(3.dp),
-        horizontalArrangement = Arrangement.spacedBy(3.dp)
+        contentPadding = PaddingValues(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(listPokemonUiData.size) { index ->
-            PokeCard(listPokemonUiData[index], onClick = onClick)
+        // Adiciona os cards dos Pokémon
+        items(pokeListUiState.pokemonUiDataList.size) { index ->
+            PokeCard(pokeListUiState.pokemonUiDataList[index], onClick = onCardClick)
+        }
+
+        // Adiciona o botão como um item especial que ocupa toda a largura
+        item(span = { GridItemSpan(2) }) { // O botão ocupa 2 colunas
+            Button(
+                onClick = onLoadMoreClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = ButtonDefaults.buttonColors(Color(0xFFFFCF31))
+            ) {
+                Text(
+                    text = "Load More",
+                    color = Color(0xFF302697),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            }
         }
     }
 }
@@ -131,9 +158,8 @@ private fun PokeCard(
         val dominantColorCardAndText = CommonFunctions().getDominantColorFromImage(
             context, imageUrl,
             //VALORES DO CARD
-            index = 1, //Métodó da paleta
-            target = 1,//métodó do target
-            alpha = 0.7//transparencia
+            index = CommonFunctions().inequalRandom(), //Métodó da paleta
+            target = (1..5).random(),//métodó do target
             //VALORES DO CARD
         )
         textCardColor = dominantColorCardAndText.second ?: pokemonUiData.color ?: Color.Gray
@@ -244,13 +270,13 @@ fun LoadingScreen() {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             GifImage(
                 modifier = Modifier
-                    .size(360.dp)
+                    .size(240.dp)
                     .clip(CircleShape)
                     .fillMaxSize()
                     .scale(1.62f) // Tamanho do GIF
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Loading...", fontSize = 24.sp)
+            Text("Loading...", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color(0xFF302697))
         }
     }
 }

@@ -60,6 +60,7 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
 
     val coil_version = "2.7.0"
+    implementation("io.coil-kt:coil:$coil_version")
     implementation("io.coil-kt:coil-compose:$coil_version")
     implementation("io.coil-kt:coil-gif:$coil_version")
     implementation("io.coil-kt:coil-svg:$coil_version")
