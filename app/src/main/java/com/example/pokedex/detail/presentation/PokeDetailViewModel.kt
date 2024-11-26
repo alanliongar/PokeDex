@@ -22,17 +22,6 @@ class PokeDetailViewModel(
     private val _uiPokeDto = MutableStateFlow(PokemonDetailUiState())
     val uiPokeDto: StateFlow<PokemonDetailUiState> = _uiPokeDto
 
-    fun setImageAndColor(image: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _uiPokeDto.value = _uiPokeDto.value.copy(
-                image = image, color = CommonFunctions().getDominantColorFromImage(
-                    context, image
-                ).first, textColor = CommonFunctions().getDominantColorFromImage(
-                    context, image
-                ).second
-            )
-        }
-    }
 
     fun fetchPokemonData(pokeId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
