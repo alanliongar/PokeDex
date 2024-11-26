@@ -1,3 +1,12 @@
+# PokéDex APP
+Pokedex é um aplicativo Android que permite aos usuários explorarem pokémons, obtendo informações diretamente da API oficial do Pokémon. Com uma interface amigável, os usuários podem visualizar detalhes de pokémons, incluindo informações de habilidades, detalhes físicos, imagens dinâmicas, e muito mais.
+
+Funcionalidades
+- Lista de pokémons: Visualize uma lista de pokémons atualizada.
+- Detalhes do Pokémon: Obtenha informações detalhadas sobre cada pokémon, como nome, detalhes de habilidade, detalhes físicos, e imagem dinâmica.
+- Interface Intuitiva: Navegação fácil e design limpo para uma melhor experiência do usuário.
+
+## :camera_flash: Screenshots
 <p float="left">
   <img src="https://github.com/user-attachments/assets/4b4e4b1b-0b6e-46f2-8520-ab413a9d90f7" width="250" />
   <img src="https://github.com/user-attachments/assets/564453a8-b678-42bf-8912-ae6f89abd63c" width="250" /> 
@@ -8,15 +17,41 @@
   <img src="https://github.com/user-attachments/assets/74981239-a508-45fc-ae7d-0740df97192c" width="250" /> 
 </p>
 
+## Technologies
+- 100% Kotlin
+- Compose
+  - Column
+  - Row
+  - Modifier
+  - Spacer
+  - LazyRows
+  - LazyColumns
+  - ComposePreview
+  - NavHostController
+  - AsyncImage
+- Retrofit
+- Pokémon API
 
-Notas ao corretor:
-Nesse app eu consegui incluir tudo do requisito, mas acabei gastando "tempo de mais" nele.
-Pontos a melhorar que tenho ciencia:
+## License
+```
+The MIT License (MIT)
 
-1 - Ele seleciona três imagens aleatoriamente na API do pokémon, mas não estoca elas no offline first, aí se o usuário fica sem internet e
-o algoritmo seleciona uma que não está estocada, a imagem vai ficar faltando e o app fica feio. A solução seria estocar sempre as três.
+Copyright (c) 2024 Alan Lucindo Gomes
 
-2 - Sei também que além desse problema, coloquei um numero limitado de pokemons (20), mas sei que isso pode ser dinamico. Pretendo futuramente
-colocar um botão lá em baixo para o usuário clicar em "Carregar mais", e aí ele pode carregar pokemons o quanto quiser. Algo similar ao que coloquei
-no app do cinenow, caso tenha curiosidade, dá uma olhada (tá aqui nos meus repositórios tbm).
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
 
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
