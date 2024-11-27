@@ -13,6 +13,9 @@ import com.example.pokedex.common.data.local.PokemonDao
 import com.example.pokedex.common.data.local.PokemonEntity
 import com.example.pokedex.common.data.model.Pokemon
 import com.example.pokedex.common.data.remote.model.CommonFunctions
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 class PokeListLocalDataSource(
@@ -32,6 +35,10 @@ class PokeListLocalDataSource(
                 ), context = context
             )
         }
+    }
+
+    suspend fun getPokeCount(): Int {
+        return dao.getPokeCount()
     }
 
 

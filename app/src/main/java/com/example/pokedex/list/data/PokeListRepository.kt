@@ -40,4 +40,7 @@ class PokeListRepository(
             return@getPokeList Result.failure(ex)
         }
     }
+    suspend fun getPokeCount(): Int{
+        return local.getPokeCount()
+    }
 }

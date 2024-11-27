@@ -27,9 +27,16 @@ class PokeListViewModel(
     private val _uiPokemonsList = MutableStateFlow<PokeListUiState>(PokeListUiState())
     val uiPokemonsList: StateFlow<PokeListUiState> = _uiPokemonsList
 
-
     init {
-        fetchPokemonList()
+        viewModelScope.launch {
+            val pokeCount = repository.getPokeCount()
+            currentPage = if (pokeCount == 0) {
+                1
+            } else {
+                pokeCount / 12
+            }
+            fetchPokemonList()
+        }
     }
 
     fun loadMorePokemons() {

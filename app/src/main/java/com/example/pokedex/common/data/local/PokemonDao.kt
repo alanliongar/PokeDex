@@ -18,4 +18,7 @@ interface PokemonDao {
 
     @Query("SELECT * FROM PokemonEntity WHERE name = :name")
     fun getPokemonByName(name: String): PokemonEntity?
+
+    @Query("SELECT COUNT(*) FROM PokemonEntity")
+    suspend fun getPokeCount(): Int
 }
