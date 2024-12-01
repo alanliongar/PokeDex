@@ -12,17 +12,13 @@ import coil.request.SuccessResult
 import com.example.pokedex.common.data.local.PokemonDao
 import com.example.pokedex.common.data.local.PokemonEntity
 import com.example.pokedex.common.data.model.Pokemon
-import com.example.pokedex.common.data.remote.model.CommonFunctions
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.io.File
 
 class PokeListLocalDataSource(
     private val dao: PokemonDao
 ) {
 
-    suspend fun updateLocalPokemonsList(pokemons: List<Pokemon>, context: Context) {
+    suspend fun updateLocalPokemonsList(pokemons: List<Pokemon>, context: Context, page: Int) {
         val pokemonsEntities = pokemons.map {
             insertOrUpdatePokemon(
                 pokemon = PokemonEntity(
@@ -31,7 +27,8 @@ class PokeListLocalDataSource(
                     image1 = it.image[0],
                     image2 = it.image[1],
                     image3 = it.image[2],
-                    color = it.color
+                    color = it.color,
+                    page = page
                 ), context = context
             )
         }
@@ -42,14 +39,15 @@ class PokeListLocalDataSource(
     }
 
 
-    suspend fun getPokemonList(): List<Pokemon> {
-        val pokemonsEntities = dao.getAllPokemons()
+    suspend fun getPokemonList(page: Int): List<Pokemon> {
+        val pokemonsEntities = dao.getThisPagePokemons(page = page)
         return pokemonsEntities.map {
             Pokemon(
                 id = it.id,
                 name = it.name,
                 image = listOf(it.image1, it.image2, it.image3),
-                color = it.color
+                color = it.color,
+                page = it.page
             )
         }
     }

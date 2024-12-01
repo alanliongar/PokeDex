@@ -35,6 +35,7 @@ class PokeListViewModelTestMockWithoutTurbine {
     @Test
     fun `Given fresh viewmodel When collecting pokemon list Then asset isloading state`() {
         runTest {
+            //Given
             val pokemon = emptyList<Pokemon>()
             whenever(
                 repository.getPokeList(
@@ -44,15 +45,15 @@ class PokeListViewModelTestMockWithoutTurbine {
             ).thenReturn(Result.success(pokemon))
             whenever(repository.getPokeCount()).thenReturn(1)
 
-
+            //When
             var result: PokeListUiState? = null
             backgroundScope.launch(testDispatcher) {
                 result = underTest.uiPokemonsList.first()
             }
+
+            //Then
             val expected = PokeListUiState(isLoading = true)
             assertEquals(expected, result)
         }
     }
-
-
 }

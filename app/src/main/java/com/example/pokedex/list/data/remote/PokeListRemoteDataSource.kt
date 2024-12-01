@@ -19,7 +19,8 @@ class PokeListRemoteDataSource(
                         id = it.pokeId,
                         name = it.name,
                         image = it.getPokeImg(context = context),
-                        color = Color.Red.value.toInt()
+                        color = Color.Red.value.toInt(),
+                        page = page
                     )
                 }
                 if (pokemons != null) {

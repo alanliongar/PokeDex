@@ -13,4 +13,5 @@ data class PokemonEntity(
     val image2: String,
     val image3: String,
     val color: Int,
+    val page: Int,
 )

@@ -17,10 +17,10 @@ class PokeListRepository(
             if (result.isSuccess) {
                 val pokemonResponse = result.getOrNull() ?: emptyList()
                 if (pokemonResponse.isNotEmpty()) {
-                    local.updateLocalPokemonsList(pokemons = pokemonResponse, context = context)
-                    return@getPokeList Result.success(local.getPokemonList())
+                    local.updateLocalPokemonsList(pokemons = pokemonResponse, context = context, page = page)
+                    return@getPokeList Result.success(local.getPokemonList(page = page))
                 } else { //a chamada foi um sucesso, mas o resultado veio vazio.
-                    val localData = local.getPokemonList()
+                    val localData = local.getPokemonList(page = page)
                     if (localData.isEmpty()) {
                         return@getPokeList Result.failure(NetworkErrorException("Empty internet request and not local data found"))
                     } else {
@@ -28,7 +28,7 @@ class PokeListRepository(
                     }
                 }
             } else {
-                val localData = local.getPokemonList()
+                val localData = local.getPokemonList(page = page)
                 if (localData.isEmpty()) {
                     return@getPokeList Result.failure(NetworkErrorException("Empty internet request and not local data found"))
                 } else {

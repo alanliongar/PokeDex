@@ -28,19 +28,11 @@ class PokeListViewModel(
     val uiPokemonsList: StateFlow<PokeListUiState> = _uiPokemonsList
 
     init {
-        viewModelScope.launch(coroutineDispatcher) {
-            val pokeCount: Int = repository.getPokeCount()
-            currentPage = if (pokeCount == 0) {
-                1
-            } else {
-                pokeCount / 12
-            }
-
-        }
         fetchPokemonList()
     }
 
     fun loadMorePokemons() {
+        currentPage++
         fetchPokemonList()
     }
 
@@ -51,7 +43,6 @@ class PokeListViewModel(
             if (result.isSuccess) {
                 val pokemonResponse = result.getOrNull()
                 if (pokemonResponse != null) {
-                    currentPage++
                     val pokeUiDataList = pokemonResponse.map { PokeListDto ->
                         val pokeImgRand = PokeListDto.image.random()
                         PokemonUiData(
