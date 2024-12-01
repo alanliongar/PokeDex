@@ -13,6 +13,7 @@ import com.example.pokedex.list.data.PokeListRepository
 import com.example.pokedex.list.presentation.ui.PokemonUiData
 import com.example.pokedex.list.data.remote.PokeListService
 import com.example.pokedex.list.presentation.ui.PokeListUiState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,10 +22,11 @@ import java.net.UnknownHostException
 
 class PokeListViewModel(
     private val repository: PokeListRepository,
-    private val context: Context
+    private val context: Context,
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
     private var currentPage: Int = 1
-    private val _uiPokemonsList = MutableStateFlow<PokeListUiState>(PokeListUiState())
+    private val _uiPokemonsList = MutableStateFlow(PokeListUiState())
     val uiPokemonsList: StateFlow<PokeListUiState> = _uiPokemonsList
 
     init {
@@ -48,10 +50,9 @@ class PokeListViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.getPokeList(context = context, page = currentPage)
             if (response.isSuccess) {
-                currentPage++
-                //_uiPokemonsList.value = emptyList() //Não precisa do equivalente nesse caso, pq a lista default ja é vazia
                 val pokemonResponse = response.getOrNull()
                 if (pokemonResponse != null) {
+                    currentPage++
                     val pokeUiDataList = pokemonResponse.map { PokeListDto ->
                         val pokeImgRand = PokeListDto.image.random()
                         PokemonUiData(
@@ -96,8 +97,6 @@ class PokeListViewModel(
             ): T {
                 val context =
                     extras[APPLICATION_KEY] as Context
-                val pokeListService =
-                    PokeRetrofitClient.retrofitInstance.create(PokeListService::class.java)
                 val application = checkNotNull(extras[APPLICATION_KEY])
                 return PokeListViewModel(
                     repository = (application as PokedexApplication).repository,
