@@ -143,7 +143,7 @@ class CommonFunctions {
                 }
 
             } catch (e: Exception) {
-                Log.e("PokeListViewModel", "Erro ao obter cor da imagem: ${e.message}")
+                //Log.e("PokeListViewModel", "Erro ao obter cor da imagem: ${e.message}")
                 Pair(null, null)
             }
         }

@@ -19,7 +19,7 @@ class PokeListLocalDataSource(
 ) {
 
     suspend fun updateLocalPokemonsList(pokemons: List<Pokemon>, context: Context, page: Int) {
-        val pokemonsEntities = pokemons.map {
+        pokemons.map {
             insertOrUpdatePokemon(
                 pokemon = PokemonEntity(
                     id = it.id,

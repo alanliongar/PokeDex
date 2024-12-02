@@ -10,7 +10,7 @@ import com.example.pokedex.list.data.remote.PokeListRemoteDataSource
 import com.example.pokedex.list.data.remote.PokeListService
 
 class PokedexApplication : Application() {
-    val db by lazy {Room.databaseBuilder(applicationContext,PokedexDataBase::class.java,"pokedex-localDatabase").build()}
+    val db by lazy {Room.databaseBuilder(applicationContext,PokedexDataBase::class.java,"pokedex-localDatabasee").build()}
     private val pokeListService by lazy {PokeRetrofitClient.retrofitInstance.create(PokeListService::class.java)}
     private val remoteDataService by lazy {PokeListRemoteDataSource(pokeListService)}
     private val localDataSource: PokeListLocalDataSource by lazy {PokeListLocalDataSource(db.getPokemonDao())}

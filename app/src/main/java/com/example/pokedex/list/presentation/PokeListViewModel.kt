@@ -21,7 +21,8 @@ import java.net.UnknownHostException
 class PokeListViewModel(
     private val repository: PokeListRepository,
     private val context: Context,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val commonFunctions: CommonFunctions = CommonFunctions()
 ) : ViewModel() {
     private var currentPage: Int = 1
     private val _uiPokemonsList = MutableStateFlow(PokeListUiState())
@@ -49,7 +50,7 @@ class PokeListViewModel(
                             name = PokeListDto.name,
                             id = PokeListDto.id,
                             imageUrl = pokeImgRand,
-                            color = CommonFunctions().getDominantColorFromImage(
+                            color = commonFunctions.getDominantColorFromImage(
                                 context,
                                 pokeImgRand
                             ).first
