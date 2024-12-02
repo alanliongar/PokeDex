@@ -31,6 +31,8 @@ Funcionalidades
   - AsyncImage
 - Retrofit
 - Pokémon API
+- Unit Tests
+  - Mockito-Kotlin
 
 ## License
 ```
