@@ -73,6 +73,7 @@ class PokeListViewModel(
                 val ex = result.exceptionOrNull()
                 if (ex is UnknownHostException) {
                     _uiPokemonsList.value = _uiPokemonsList.value.copy(
+                        isLoading = false,
                         isError = true,
                         errorMessage = "Internet request not successful",
                         pokemonUiDataList = _uiPokemonsList.value.pokemonUiDataList + emptyList()
@@ -80,12 +81,14 @@ class PokeListViewModel(
                 } else {
                     if (ex != null) {
                         _uiPokemonsList.value = _uiPokemonsList.value.copy(
+                            isLoading = false,
                             isError = true,
                             errorMessage = ex.message ?: "Something went wrong",
                             pokemonUiDataList = _uiPokemonsList.value.pokemonUiDataList + emptyList()
                         )
                     } else {
                         _uiPokemonsList.value = _uiPokemonsList.value.copy(
+                            isLoading = false,
                             isError = true,
                             errorMessage = "Something went wrong",
                             pokemonUiDataList = _uiPokemonsList.value.pokemonUiDataList + emptyList()

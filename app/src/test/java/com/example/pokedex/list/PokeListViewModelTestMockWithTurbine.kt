@@ -1,12 +1,13 @@
 package com.example.pokedex.list
 
-import com.example.pokedex.list.data.PokeListRepository
-import com.example.pokedex.list.presentation.PokeListViewModel
 import android.content.Context
 import android.util.Log
 import androidx.compose.ui.graphics.Color
+import app.cash.turbine.test
 import com.example.pokedex.common.data.model.Pokemon
 import com.example.pokedex.common.data.remote.model.CommonFunctions
+import com.example.pokedex.list.data.PokeListRepository
+import com.example.pokedex.list.presentation.PokeListViewModel
 import com.example.pokedex.list.presentation.ui.PokeListUiState
 import com.example.pokedex.list.presentation.ui.PokemonUiData
 import junit.framework.TestCase.assertEquals
@@ -25,7 +26,7 @@ import org.mockito.Mockito
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-class PokeListViewModelTestMockWithoutTurbine {
+class PokeListViewModelTestMockWithTurbine {
     private val repository: PokeListRepository = mock()
     private val context: Context = mock()
     private val commonFunctions = mock<CommonFunctions>()
@@ -67,16 +68,12 @@ class PokeListViewModelTestMockWithoutTurbine {
                     page = 1
                 )
             ).thenReturn(Result.success(pokemon))
-
-            //When
-            var result: PokeListUiState? = null
-            backgroundScope.launch(testDispatcher) {
-                result = underTest.uiPokemonsList.drop(0).first()
-            }
-
-            //Then
             val expected = PokeListUiState(isLoading = true)
-            assertEquals(expected, result)
+            //When
+            underTest.uiPokemonsList.test {
+                //Then
+                assertEquals(expected,awaitItem())
+            }
         }
     }
 
@@ -99,7 +96,6 @@ class PokeListViewModelTestMockWithoutTurbine {
             whenever(
                 commonFunctions.getDominantColorFromImage(context, "image")
             ).thenReturn(Pair(Color(1), Color(1)))
-
             val expected = PokeListUiState(
                 pokemonUiDataList = listOf(
                     PokemonUiData(
@@ -111,11 +107,9 @@ class PokeListViewModelTestMockWithoutTurbine {
                 )
             )
             // When
-            var result: PokeListUiState? = null
-            backgroundScope.launch(testDispatcher) {
-                result = underTest.uiPokemonsList.drop(1).first()
+            underTest.uiPokemonsList.test {
+                assertEquals(expected, awaitItem())
             }
-            assertEquals(expected, result)
         }
     }
 
@@ -127,7 +121,6 @@ class PokeListViewModelTestMockWithoutTurbine {
             whenever(repository.getPokeList(context = context, page = 1)).thenReturn(
                 Result.success(pokemon)
             )
-
             val expected = PokeListUiState(
                 pokemonUiDataList = emptyList(),
                 isLoading = false,
@@ -135,11 +128,10 @@ class PokeListViewModelTestMockWithoutTurbine {
                 errorMessage = "Empty internet request"
             )
             // When
-            var result: PokeListUiState? = null
-            backgroundScope.launch(testDispatcher) {
-                result = underTest.uiPokemonsList.drop(1).first() //drop the first state(isloading true)
+            underTest.uiPokemonsList.test {
+                //Then
+                assertEquals(expected, awaitItem())
             }
-            assertEquals(expected, result)
         }
     }
 }

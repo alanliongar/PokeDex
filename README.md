@@ -33,6 +33,7 @@ Funcionalidades
 - Pokémon API
 - Unit Tests
   - Mockito-Kotlin
+  - Turbine
 
 ## License
 ```

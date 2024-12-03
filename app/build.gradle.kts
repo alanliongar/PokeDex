@@ -70,6 +70,7 @@ dependencies {
     implementation("androidx.palette:palette-ktx:1.0.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation("app.cash.turbine:turbine:1.2.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
