@@ -10,6 +10,7 @@ import com.example.pokedex.common.data.remote.PokeRetrofitClient
 import com.example.pokedex.common.data.remote.model.CommonFunctions
 import com.example.pokedex.detail.data.PokeDetailService
 import com.example.pokedex.detail.presentation.ui.PokemonDetailUiState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,24 +18,27 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PokeDetailViewModel(
-    private val pokeDetailService: PokeDetailService, private val context: Context
+    private val pokeDetailService: PokeDetailService,
+    private val context: Context,
+    private val viewModelDetailDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val commonFunctions: CommonFunctions = CommonFunctions()
 ) : ViewModel() {
     private val _uiPokeDto = MutableStateFlow(PokemonDetailUiState())
     val uiPokeDto: StateFlow<PokemonDetailUiState> = _uiPokeDto
 
 
     fun fetchPokemonData(pokeId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        _uiPokeDto.value = PokemonDetailUiState(isLoading = true)
+        viewModelScope.launch(viewModelDetailDispatcher) {
             try {
                 if (_uiPokeDto.value.PokeDetail == null) {
-                    _uiPokeDto.value = PokemonDetailUiState(isLoading = true, isError = false)
                     val pokeDetail = pokeDetailService.getPokemonDetail(pokeId)
                     if (pokeDetail.isSuccessful) {
                         val body = pokeDetail.body()
                         if (body != null) {
-                            val img = CommonFunctions().getRandomPokeImg(pokeId)
-                            val baseColor = CommonFunctions().getDominantColorFromImage(
-                                context, imageUrl = img, index = CommonFunctions().inequalRandom(),
+                            val img = commonFunctions.getRandomPokeImg(pokeId)
+                            val baseColor = commonFunctions.getDominantColorFromImage(
+                                context, imageUrl = img, index = commonFunctions.inequalRandom(),
                                 target = (1..5).random()
                             )
                             val color = baseColor.first

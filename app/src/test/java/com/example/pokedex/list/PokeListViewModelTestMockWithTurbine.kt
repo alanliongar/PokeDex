@@ -12,9 +12,6 @@ import com.example.pokedex.list.presentation.ui.PokeListUiState
 import com.example.pokedex.list.presentation.ui.PokemonUiData
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -72,7 +69,8 @@ class PokeListViewModelTestMockWithTurbine {
             //When
             underTest.uiPokemonsList.test {
                 //Then
-                assertEquals(expected,awaitItem())
+                skipItems(0)
+                assertEquals(expected,awaitItem()) //Por algum motivo, a coleta não está sendo feita no primeiro ítem
             }
         }
     }

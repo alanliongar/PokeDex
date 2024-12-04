@@ -26,6 +26,8 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 class PokeListViewModelTestMockWithoutTurbine {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val testDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
     private val repository: PokeListRepository = mock()
     private val context: Context = mock()
     private val commonFunctions = mock<CommonFunctions>()
@@ -43,9 +45,6 @@ class PokeListViewModelTestMockWithoutTurbine {
     fun tearDownMockLog() {
         mockedLog.close() // Libera o mock após cada teste
     }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private val testDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
 
     private val underTest by lazy {
         PokeListViewModel(

@@ -9,7 +9,4 @@ import retrofit2.http.Path
 interface PokeDetailService {
     @GET("pokemon/{id}/")
     suspend fun getPokemonDetail(@Path("id") id: Int): Response<PokeDto> //Detalhes (vários)
-
-    @GET("pokemon-species/{name}/")
-    suspend fun getPokemonColorName(@Path("name") name: String): Response<PokemonColorName>
 }
