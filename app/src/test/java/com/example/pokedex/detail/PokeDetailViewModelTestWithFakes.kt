@@ -2,11 +2,6 @@ package com.example.pokedex.detail
 //Migrar essa bussanha pra FAKES
 import android.content.Context
 import android.util.Log
-import com.example.pokedex.common.data.remote.model.CommonFunctions
-import com.example.pokedex.common.data.remote.model.PokeDto
-import com.example.pokedex.detail.data.PokeDetailService
-import com.example.pokedex.detail.presentation.PokeDetailViewModel
-import com.example.pokedex.detail.presentation.ui.PokemonDetailUiState
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.drop
@@ -14,6 +9,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import com.example.pokedex.common.data.remote.model.CommonFunctions
+import com.example.pokedex.common.data.remote.model.CommonFunctionsContract
+import com.example.pokedex.common.data.remote.model.PokeDto
+import com.example.pokedex.detail.data.PokeDetailService
+import com.example.pokedex.detail.presentation.PokeDetailViewModel
+import com.example.pokedex.detail.presentation.ui.PokemonDetailUiState
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -28,8 +29,8 @@ import retrofit2.Response
 
 class PokeDetailViewModelTestWithFakes {
     private val context: Context = mock()
-    private val commonFunctions = mock<CommonFunctions>()
-    private val pokeDetailService = mock<PokeDetailService>()
+    private val commonFunctions = FakePokeCommonFunctions()
+    private val pokeDetailService: PokeDetailService = mock()
 
     private lateinit var mockedLog: MockedStatic<Log>
 
@@ -86,15 +87,11 @@ class PokeDetailViewModelTestWithFakes {
 
             // Mockando a resposta da API
             whenever(pokeDetailService.getPokemonDetail(1)).thenReturn(Response.success(fakePokeDto))
-            whenever(commonFunctions.getRandomPokeImg(1)).thenReturn("image1")
-            whenever(
-                commonFunctions.getDominantColorFromImage(
-                    context = eq(context), // Usamos `eq` para context porque ele é específico
-                    imageUrl = eq("image"), // Para imageUrl também usamos `eq` já que o valor é específico
-                    index = any(), // Para index, usamos any() já que ele não é específico
-                    target = any() // Matcher personalizado para validar o range
-                )
-            ).thenReturn(Pair(null, null))
+
+
+            commonFunctions.getRandomPokeImg = "image"
+            commonFunctions.returnColors = Pair(null,null)
+
             // When: Chamada para disparar a coleta do detalhe do Pokémon
 
             // Captura o estado do StateFlow

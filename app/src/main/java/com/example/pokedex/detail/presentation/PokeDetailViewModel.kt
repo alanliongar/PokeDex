@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.pokedex.common.data.remote.PokeRetrofitClient
 import com.example.pokedex.common.data.remote.model.CommonFunctions
+import com.example.pokedex.common.data.remote.model.CommonFunctionsContract
 import com.example.pokedex.detail.data.PokeDetailService
 import com.example.pokedex.detail.presentation.ui.PokemonDetailUiState
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,7 +22,7 @@ class PokeDetailViewModel(
     private val pokeDetailService: PokeDetailService,
     private val context: Context,
     private val viewModelDetailDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val commonFunctions: CommonFunctions = CommonFunctions()
+    private val commonFunctions: CommonFunctionsContract = CommonFunctions()
 ) : ViewModel() {
     private val _uiPokeDto = MutableStateFlow(PokemonDetailUiState())
     val uiPokeDto: StateFlow<PokemonDetailUiState> = _uiPokeDto

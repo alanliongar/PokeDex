@@ -70,7 +70,10 @@ class PokeListViewModelTestMockWithTurbine {
             underTest.uiPokemonsList.test {
                 //Then
                 skipItems(0)
-                assertEquals(expected,awaitItem()) //Por algum motivo, a coleta não está sendo feita no primeiro ítem
+                assertEquals(
+                    expected,
+                    awaitItem()
+                ) //Por algum motivo, a coleta não está sendo feita no primeiro ítem
             }
         }
     }
@@ -92,7 +95,7 @@ class PokeListViewModelTestMockWithTurbine {
                 Result.success(pokemon)
             )
             whenever(
-                commonFunctions.getDominantColorFromImage(context, "image")
+                commonFunctions.getDominantColorFromImage(context, "image", index = 1, target = 1)
             ).thenReturn(Pair(Color(1), Color(1)))
             val expected = PokeListUiState(
                 pokemonUiDataList = listOf(

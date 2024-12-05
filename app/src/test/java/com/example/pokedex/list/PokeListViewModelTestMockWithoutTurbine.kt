@@ -96,7 +96,7 @@ class PokeListViewModelTestMockWithoutTurbine {
                 Result.success(pokemon)
             )
             whenever(
-                commonFunctions.getDominantColorFromImage(context, "image")
+                commonFunctions.getDominantColorFromImage(context, "image", index = 1, target = 1)
             ).thenReturn(Pair(Color(1), Color(1)))
 
             val expected = PokeListUiState(
@@ -136,7 +136,8 @@ class PokeListViewModelTestMockWithoutTurbine {
             // When
             var result: PokeListUiState? = null
             backgroundScope.launch(testDispatcher) {
-                result = underTest.uiPokemonsList.drop(1).first() //drop the first state(isloading true)
+                result =
+                    underTest.uiPokemonsList.drop(1).first() //drop the first state(isloading true)
             }
             assertEquals(expected, result)
         }

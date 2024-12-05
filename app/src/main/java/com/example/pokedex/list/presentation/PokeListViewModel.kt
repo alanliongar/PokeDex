@@ -52,7 +52,7 @@ class PokeListViewModel(
                             imageUrl = pokeImgRand,
                             color = commonFunctions.getDominantColorFromImage(
                                 context,
-                                pokeImgRand
+                                pokeImgRand,index=1,target=1
                             ).first
                         )
                     }

@@ -13,8 +13,6 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import androidx.palette.graphics.Target
-
-
 import com.example.pokedex.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -24,12 +22,12 @@ import kotlin.math.pow
 import kotlin.math.round
 import kotlin.random.Random
 
-class CommonFunctions {
-    suspend fun getDominantColorFromImage(
+class CommonFunctions : CommonFunctionsContract {
+    override suspend fun getDominantColorFromImage(
         context: Context,
         imageUrl: String?,
-        index: Int = 1,
-        target: Int = 1,
+        index: Int,
+        target: Int,
     ): Pair<Color?, Color?> {
         return withContext(Dispatchers.IO) {
             val imageLoader = ImageLoader(context)
@@ -149,7 +147,7 @@ class CommonFunctions {
         }
     }
 
-    fun inequalRandom(): Int {
+    override fun inequalRandom(): Int {
         val chance = (0..99).random() // Número entre 0 e 99
         return if (chance < 90) { // 80% de chance
             (1..3).random()
@@ -183,7 +181,7 @@ class CommonFunctions {
         return Color(red / 255f, green / 255f, blue / 255f, color.alpha)
     }
 
-    fun getRandomPokeImg(pokeId: Int): String {
+    override suspend fun getRandomPokeImg(pokeId: Int): String {
         val urls = listOf(
             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokeId}.svg",
             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokeId}.png",
