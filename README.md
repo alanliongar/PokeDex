@@ -34,6 +34,7 @@ Funcionalidades
 - Unit Tests
   - Mockito-Kotlin
   - Turbine
+  - Fakes
 
 ## License
 ```
