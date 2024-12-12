@@ -31,6 +31,8 @@ Features
   - ComposePreview
   - NavHostController
   - AsyncImage
+- Coil: Used for rendering GIFs and SVGs efficiently
+- Palette: Extracts the dominant color from character images and applies it to the card backgrounds for a cohesive UI
 - Retrofit
 - Pokémon API
 - Unit Tests
