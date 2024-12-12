@@ -1,10 +1,10 @@
 # PokéDex APP
-Pokedex é um aplicativo Android que permite aos usuários explorarem pokémons, obtendo informações diretamente da API oficial do Pokémon. Com uma interface amigável, os usuários podem visualizar detalhes de pokémons, incluindo informações de habilidades, detalhes físicos, imagens dinâmicas, e muito mais.
+Pokedex is an Android application that allows users to explore Pokémon, retrieving information directly from the official Pokémon API. With a user-friendly interface, users can view Pokémon details, including abilities, physical attributes, dynamic images, and more.
 
-Funcionalidades
-- Lista de pokémons: Visualize uma lista de pokémons atualizada.
-- Detalhes do Pokémon: Obtenha informações detalhadas sobre cada pokémon, como nome, detalhes de habilidade, detalhes físicos, e imagem dinâmica.
-- Interface Intuitiva: Navegação fácil e design limpo para uma melhor experiência do usuário.
+Features
+- Pokémon List: View an updated list of Pokémon.
+- Pokémon Details: Access detailed information about each Pokémon, such as name, abilities, physical attributes, and dynamic images.
+- Intuitive Interface: Easy navigation and clean design for a better user experience.
 
 ## :camera_flash: Screenshots
 <p float="left">
@@ -19,6 +19,8 @@ Funcionalidades
 
 ## Technologies
 - 100% Kotlin
+- Repository Pattern: For scalable and maintainable data handling
+- MVVM Architecture: Ensures a clear separation of concerns for cleaner code structure
 - Compose
   - Column
   - Row
