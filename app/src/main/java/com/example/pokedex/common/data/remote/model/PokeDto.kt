@@ -2,7 +2,6 @@ package com.example.pokedex.common.data.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-@kotlinx.serialization.Serializable
 data class PokeDto( //essa é uma resposta de DETALHE, ela retorna um elemento disso a cada chamada.
     var name: String,
     var weight: Int,

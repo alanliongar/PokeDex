@@ -3,7 +3,6 @@ package com.example.pokedex.common.data.remote.model
 import android.content.Context
 import com.google.gson.annotations.SerializedName
 
-@kotlinx.serialization.Serializable
 data class PokeListDto(
     @SerializedName("name")
     val name: String,

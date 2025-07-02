@@ -2,7 +2,6 @@ package com.example.pokedex.common.data.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-@kotlinx.serialization.Serializable
 data class PokemonColorName(
     @SerializedName("color") val color: ColorDetail,
 ) {
