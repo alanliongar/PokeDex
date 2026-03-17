@@ -53,7 +53,7 @@ import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.size.Size
-import com.example.pokedex.R
+import com.example.pokedexsimple.R
 import com.example.pokedex.common.data.remote.model.CommonFunctions
 import com.example.pokedex.list.presentation.PokeListViewModel
 

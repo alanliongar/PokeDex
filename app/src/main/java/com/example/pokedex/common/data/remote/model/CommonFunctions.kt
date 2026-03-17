@@ -13,7 +13,7 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import androidx.palette.graphics.Target
-import com.example.pokedex.R
+import com.example.pokedexsimple.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File

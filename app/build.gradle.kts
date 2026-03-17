@@ -6,11 +6,11 @@ plugins {
     id("kotlin-parcelize")
 }
 android {
-    namespace = "com.example.pokedex"
+    namespace = "com.example.pokedexsimple"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.pokedex"
+        applicationId = "com.example.pokedexsimple"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

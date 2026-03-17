@@ -265,7 +265,6 @@ private fun StatBar(statName: String, currentValue: Int, color: Color, maxValue:
                     .clip(RoundedCornerShape(12.dp))
                     .background(color)
             )
-
             Text(
                 text = "$currentValue / $maxValue",
                 style = MaterialTheme.typography.bodyMedium.copy(color = textColor),

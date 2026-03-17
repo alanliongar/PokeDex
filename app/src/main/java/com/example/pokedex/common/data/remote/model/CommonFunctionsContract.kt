@@ -17,6 +17,4 @@ interface CommonFunctionsContract {
     fun inequalRandom(): Int {
         return (1..5).random()
     }
-
-
 }
