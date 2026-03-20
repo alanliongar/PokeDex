@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
 
     private val pokeListViewModel by viewModels<PokeListViewModel> { PokeListViewModel.Factory }
     private val pokeDetailViewModel by viewModels<PokeDetailViewModel> { PokeDetailViewModel.Factory }
-    //Testing internet
+    //Testing port
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { PokeDexApp(pokeListViewModel, pokeDetailViewModel) }
