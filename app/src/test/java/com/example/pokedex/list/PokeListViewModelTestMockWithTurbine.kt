@@ -65,7 +65,7 @@ class PokeListViewModelTestMockWithTurbine {
                     page = 1
                 )
             ).thenReturn(Result.success(pokemon))
-            val expected = PokeListUiState(isLoading = true)
+            val expected = PokeListUiState(isInitialLoading = true)
             //When
             underTest.uiPokemonsList.test {
                 //Then
@@ -124,7 +124,7 @@ class PokeListViewModelTestMockWithTurbine {
             )
             val expected = PokeListUiState(
                 pokemonUiDataList = emptyList(),
-                isLoading = false,
+                isInitialLoading = false,
                 isError = true,
                 errorMessage = "Empty internet request"
             )

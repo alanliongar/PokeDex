@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,32 +17,34 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -56,6 +59,7 @@ import coil.size.Size
 import com.example.pokedexsimple.R
 import com.example.pokedex.common.data.remote.model.CommonFunctions
 import com.example.pokedex.list.presentation.PokeListViewModel
+import kotlin.random.Random
 
 @Composable
 fun PokeListScreen(
@@ -65,19 +69,21 @@ fun PokeListScreen(
     val pokemons by pokeListViewModel.uiPokemonsList.collectAsState()
     PokeListContent(
         pokeListUiState = pokemons,
-        onLoadMoreClick = { pokeListViewModel.loadMorePokemons() },
         onClick = { pokeItemClicked ->
             navController.navigate("pokemonDetail/${pokeItemClicked.id}")
-        })
+        }, onLoadMore = {
+            pokeListViewModel.loadMorePokemons()
+        }
+    )
 }
 
 @Composable
 private fun PokeListContent(
     pokeListUiState: PokeListUiState,
     onClick: (PokemonUiData) -> Unit,
-    onLoadMoreClick: () -> Unit
+    onLoadMore: () -> Unit
 ) {
-    val isLoading = pokeListUiState.isLoading
+    val isLoading = pokeListUiState.isInitialLoading
     val isError = pokeListUiState.isError
     val errorMessage = pokeListUiState.errorMessage
     Column(
@@ -92,22 +98,41 @@ private fun PokeListContent(
             LoadingScreen()
         } else {
             PokeTitleImage()
-            PokeGridWithFullWidthButton(
+            PokeGrid(
                 pokeListUiState = pokeListUiState,
                 onCardClick = onClick,
-                onLoadMoreClick = onLoadMoreClick
+                onLoadMore = onLoadMore,
             )
         }
     }
 }
 
 @Composable
-fun PokeGridWithFullWidthButton(
+fun PokeGrid(
     pokeListUiState: PokeListUiState,
     onCardClick: (PokemonUiData) -> Unit,
-    onLoadMoreClick: () -> Unit
+    onLoadMore: () -> Unit
 ) {
+    val gridState = rememberLazyGridState()
+
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val layoutInfo = gridState.layoutInfo
+            val totalItems = layoutInfo.totalItemsCount
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+
+            totalItems > 0 && lastVisibleItem >= totalItems - 6
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore.value) {
+        if(shouldLoadMore.value){
+            onLoadMore()
+        }
+    }
+
     LazyVerticalGrid(
+        state = gridState,
         columns = GridCells.Fixed(2),
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(8.dp),
@@ -115,27 +140,18 @@ fun PokeGridWithFullWidthButton(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // Adiciona os cards dos Pokémon
-        items(pokeListUiState.pokemonUiDataList.size) { index ->
-            PokeCard(pokeListUiState.pokemonUiDataList[index], onClick = onCardClick)
+        items(items = pokeListUiState.pokemonUiDataList,
+            key = { it.id?.toString() ?: it.name.orEmpty() }
+            ) { pokemon ->
+            PokeCard(pokemon, onClick = onCardClick)
         }
 
-        // Adiciona o botão como um item especial que ocupa toda a largura
-        item(span = { GridItemSpan(2) }) { // O botão ocupa 2 colunas
-            Button(
-                onClick = onLoadMoreClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(Color(0xFFFFCF31))
-            ) {
-                Text(
-                    text = "Load More",
-                    color = Color(0xFF302697),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
+        if(pokeListUiState.isAppending){
+            item(span = { GridItemSpan(2) }){
+                LoadingMoreFooter()
             }
         }
+
     }
 }
 
@@ -272,20 +288,35 @@ fun LoadingScreen() {
                 modifier = Modifier
                     .size(240.dp)
                     .clip(CircleShape)
-                    .fillMaxSize()
-                    .scale(1.62f) // Tamanho do GIF
+                    .scale(1.0f)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Loading...", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color(0xFF302697))
+            Text(
+                text = "Loading...",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF302697)
+            )
         }
     }
 }
+
 
 @Composable
 fun GifImage(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+
+    if (LocalInspectionMode.current) {
+        Image(
+            painter = painterResource(R.drawable.loadingpokemon),
+            contentDescription = null,
+            modifier = modifier
+        )
+        return
+    }
+
     val imageLoader = ImageLoader.Builder(context)
         .components {
             if (SDK_INT >= 28) {
@@ -295,11 +326,13 @@ fun GifImage(
             }
         }
         .build()
+
     Image(
         painter = rememberAsyncImagePainter(
-            ImageRequest.Builder(context).data(data = R.drawable.loadingpokemon).apply {
-                size(Size.ORIGINAL)
-            }.build(),
+            model = ImageRequest.Builder(context)
+                .data(R.drawable.loadingpokemon)
+                .size(Size.ORIGINAL)
+                .build(),
             imageLoader = imageLoader
         ),
         contentDescription = null,
@@ -322,5 +355,186 @@ private fun PokeTitleImage() {
                 .height(90.dp),
             contentScale = ContentScale.FillBounds
         )
+    }
+}
+
+@Composable
+fun LoadingMoreFooter() {
+    val footerType = remember { Random.nextInt(8) }
+
+    when (footerType) {
+        0 -> LoadingFooterClassic()
+        1 -> LoadingFooterWithText()
+        2 -> LoadingFooterCardStyle()
+        3 -> LoadingFooterMinimalist()
+        4 -> LoadingFooterWithProgress()
+        5 -> LoadingFooterGameFeel()
+        6 -> LoadingFooterFade()
+        7 -> LoadingFooterHorizontal()
+    }
+}
+
+@Composable
+private fun LoadingFooterClassic() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        GifImage(
+            modifier = Modifier.size(80.dp)
+        )
+    }
+}
+
+@Composable
+private fun LoadingFooterWithText() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        GifImage(
+            modifier = Modifier.size(80.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "Loading more Pokémon...",
+            fontSize = 14.sp,
+            color = Color.Gray
+        )
+    }
+}
+
+@Composable
+private fun LoadingFooterCardStyle() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                GifImage(
+                    modifier = Modifier.size(70.dp)
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Catching more Pokémon..."
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingFooterMinimalist() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        GifImage(
+            modifier = Modifier.size(50.dp)
+        )
+    }
+}
+
+@Composable
+private fun LoadingFooterWithProgress() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        GifImage(
+            modifier = Modifier.size(60.dp)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LinearProgressIndicator(
+            modifier = Modifier.fillMaxWidth(0.5f)
+        )
+    }
+}
+
+@Composable
+private fun LoadingFooterGameFeel() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        GifImage(
+            modifier = Modifier.size(90.dp)
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = "Searching in tall grass...",
+            fontSize = 13.sp,
+            color = Color.Gray
+        )
+    }
+}
+
+@Composable
+private fun LoadingFooterFade() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp)
+            .alpha(0.7f),
+        contentAlignment = Alignment.Center
+    ) {
+        GifImage(
+            modifier = Modifier.size(70.dp)
+        )
+    }
+}
+
+@Composable
+private fun LoadingFooterHorizontal() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        GifImage(
+            modifier = Modifier.size(50.dp)
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Text(text = "Loading more...")
+    }
+}
+
+@Preview (showBackground = false)
+@Composable()
+private fun LoadingScreenPreview() {
+    MaterialTheme{
+        LoadingScreen()
     }
 }

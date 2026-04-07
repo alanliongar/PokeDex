@@ -74,7 +74,7 @@ class PokeListViewModelTestMockWithoutTurbine {
             }
 
             //Then
-            val expected = PokeListUiState(isLoading = true)
+            val expected = PokeListUiState(isInitialLoading = true)
             assertEquals(expected, result)
         }
     }
@@ -129,7 +129,7 @@ class PokeListViewModelTestMockWithoutTurbine {
 
             val expected = PokeListUiState(
                 pokemonUiDataList = emptyList(),
-                isLoading = false,
+                isInitialLoading = false,
                 isError = true,
                 errorMessage = "Empty internet request"
             )
