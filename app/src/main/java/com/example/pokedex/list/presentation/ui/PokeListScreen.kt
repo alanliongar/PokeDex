@@ -184,11 +184,11 @@ private fun PokeCard(
     }
     Column(
         modifier = Modifier
-            .padding(16.dp)
+            .fillMaxWidth().padding(5.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(color = cardColor)
             .border(2.dp, cardColor, RoundedCornerShape(16.dp))
-            .height(200.dp)
+            .height(220.dp)
             .clickable { onClick.invoke(pokemonUiData) },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
