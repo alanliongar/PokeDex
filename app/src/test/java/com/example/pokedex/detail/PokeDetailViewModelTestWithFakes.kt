@@ -2,6 +2,10 @@ package com.example.pokedex.detail
 //Migrar essa bussanha pra FAKES
 import android.content.Context
 import android.util.Log
+import com.example.pokedex.common.data.remote.model.PokeDto
+import com.example.pokedex.detail.data.PokeDetailService
+import com.example.pokedex.detail.presentation.PokeDetailViewModel
+import com.example.pokedex.detail.presentation.ui.PokemonDetailUiState
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.drop
@@ -9,20 +13,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import com.example.pokedex.common.data.remote.model.CommonFunctions
-import com.example.pokedex.common.data.remote.model.CommonFunctionsContract
-import com.example.pokedex.common.data.remote.model.PokeDto
-import com.example.pokedex.detail.data.PokeDetailService
-import com.example.pokedex.detail.presentation.PokeDetailViewModel
-import com.example.pokedex.detail.presentation.ui.PokemonDetailUiState
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.MockedStatic
 import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import retrofit2.Response

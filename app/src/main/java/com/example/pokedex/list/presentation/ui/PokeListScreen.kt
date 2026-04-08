@@ -17,7 +17,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,24 +49,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import com.example.pokedexsimple.R
 import com.example.pokedex.common.data.remote.model.CommonFunctions
 import com.example.pokedex.common.ui.GifImage
 import com.example.pokedex.common.ui.LoadingScreen
 import com.example.pokedex.common.ui.PokeErrorImage
 import com.example.pokedex.common.ui.PokeTitleImage
 import com.example.pokedex.list.presentation.PokeListViewModel
+import com.example.pokedexsimple.R
 import kotlin.random.Random
 
 @Composable
 fun PokeListScreen(
     navController: NavHostController,
-    pokeListViewModel: PokeListViewModel,
+    pokeListViewModel: PokeListViewModel = hiltViewModel(),
 ) {
     val pokemons by pokeListViewModel.uiPokemonsList.collectAsState()
     val selectedPokemons = pokeListViewModel.selectedPokemons.collectAsState().value

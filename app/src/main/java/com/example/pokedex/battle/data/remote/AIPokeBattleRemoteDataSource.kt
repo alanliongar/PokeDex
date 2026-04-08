@@ -3,12 +3,12 @@ package com.example.pokedex.battle.data.remote
 import com.example.pokedex.battle.data.OpenAiService
 import com.example.pokedex_hacksprint_2025.battle.data.model.Message
 import com.example.pokedex_hacksprint_2025.battle.data.model.OpenAiRequest
-import kotlin.Result
+import javax.inject.Inject
 
-class AIPokeBattleRemoteDataSource(
+class AIPokeBattleRemoteDataSource @Inject constructor(
     private val openAiService: OpenAiService
-) {
-    suspend fun battleResult(firstPokeName: String, secondPokeName: String): Result<String> {
+): RemoteDataSource {
+    override suspend fun battleResult(firstPokeName: String, secondPokeName: String): Result<String> {
 
         val prompt = """
             Simule uma batalha rápida entre $firstPokeName e $secondPokeName. 

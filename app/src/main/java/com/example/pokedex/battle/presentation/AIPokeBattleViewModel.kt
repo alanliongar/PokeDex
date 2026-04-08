@@ -6,23 +6,24 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
-import com.example.pokedex.battle.presentation.ui.BattleUiState
-import com.example.pokedex.common.data.remote.RetrofitOpenAI
-import com.example.pokedex.battle.data.OpenAiService
 import com.example.pokedex.battle.data.remote.AIPokeBattleRemoteDataSource
+import com.example.pokedex.battle.presentation.ui.BattleUiState
+import com.example.pokedex.di.DispatchersIO
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AIPokeBattleViewModel(
+
+@HiltViewModel
+class AIPokeBattleViewModel @Inject constructor(
     private val remote: AIPokeBattleRemoteDataSource,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @DispatchersIO private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
     private val _pokemonBattleResult = MutableStateFlow<BattleUiState>(BattleUiState())
     val pokemonBattleResult: StateFlow<BattleUiState> = _pokemonBattleResult
@@ -88,7 +89,7 @@ class AIPokeBattleViewModel(
     }
 
 
-    companion object {
+    /*companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(
@@ -100,5 +101,5 @@ class AIPokeBattleViewModel(
                 return AIPokeBattleViewModel(remote) as T
             }
         }
-    }
+    }*/
 }

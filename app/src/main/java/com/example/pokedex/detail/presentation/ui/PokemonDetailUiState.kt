@@ -1,7 +1,7 @@
 package com.example.pokedex.detail.presentation.ui
 
-import com.example.pokedex.common.data.remote.model.PokeDto
 import androidx.compose.ui.graphics.Color
+import com.example.pokedex.common.data.remote.model.PokeDto
 
 data class PokemonDetailUiState(
     val PokeDetail: PokeDto? = null,

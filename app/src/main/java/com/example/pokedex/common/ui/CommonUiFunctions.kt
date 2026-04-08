@@ -3,6 +3,7 @@ package com.example.pokedex.common.ui
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
@@ -39,22 +44,42 @@ import coil.size.Size
 import com.example.pokedexsimple.R
 
 @Composable
-fun PokeTitleImage() {
+fun PokeTitleImage(navHostController: NavHostController? = null) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.pokedex_logo),
-            contentDescription = "Imagem escrito Pokedex",
+        Box(
             modifier = Modifier
-                .width(250.dp)
+                .fillMaxWidth()
                 .height(90.dp),
-            contentScale = ContentScale.FillBounds
-        )
+            contentAlignment = Alignment.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.pokedex_logo),
+                contentDescription = "Imagem escrito Pokedex",
+                modifier = Modifier
+                    .width(250.dp)
+                    .height(90.dp),
+                contentScale = ContentScale.FillBounds
+            )
+
+            if (navHostController != null) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Voltar",
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(start = 12.dp)
+                        .size(42.dp)
+                        .clickable { navHostController.popBackStack() }
+                )
+            }
+        }
     }
 }
+
 @Composable
 fun PokeErrorImage(errorMsg: String? = null) {
     Column(
@@ -73,19 +98,19 @@ fun PokeErrorImage(errorMsg: String? = null) {
             painter = painterResource(id = R.drawable.error_background),
             contentDescription = "Imagem de erro",
             modifier = Modifier
-                .width(432.dp)
-                .height(577.dp),
+                .width(300.dp)
+                .height(400.dp),
             contentScale = ContentScale.FillHeight
         )
         Text(
-            fontSize = 32.sp,
+            fontSize = 24.sp,
             modifier = Modifier.padding(16.dp),
             color = Color.Red,
             text = "Something went wrong!",
             fontWeight = FontWeight.Bold
         )
         Text(
-            fontSize = 20.sp,
+            fontSize = 16.sp,
             modifier = Modifier.padding(16.dp),
             color = Color.Blue,
             text = errorMsg ?: "Go back and try again",
@@ -158,10 +183,10 @@ fun GifImage(
     )
 }
 
-@Preview (showBackground = false)
+@Preview(showBackground = false)
 @Composable()
 private fun LoadingScreenPreview() {
-    MaterialTheme{
+    MaterialTheme {
         LoadingScreen()
     }
 }

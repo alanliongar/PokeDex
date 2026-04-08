@@ -3,25 +3,27 @@ package com.example.pokedex.detail.presentation
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
-import com.example.pokedex.common.data.remote.PokeRetrofitClient
 import com.example.pokedex.common.data.remote.model.CommonFunctions
 import com.example.pokedex.common.data.remote.model.CommonFunctionsContract
 import com.example.pokedex.detail.data.PokeDetailService
 import com.example.pokedex.detail.presentation.ui.PokemonDetailUiState
+import com.example.pokedex.di.DispatchersIO
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PokeDetailViewModel(
+@HiltViewModel
+class PokeDetailViewModel @Inject constructor(
     private val pokeDetailService: PokeDetailService,
-    private val context: Context,
-    private val viewModelDetailDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    @ApplicationContext private val context: Context,
+    @DispatchersIO private val viewModelDetailDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val commonFunctions: CommonFunctionsContract = CommonFunctions()
 ) : ViewModel() {
     private val _uiPokeDto = MutableStateFlow(PokemonDetailUiState())
@@ -87,7 +89,7 @@ class PokeDetailViewModel(
         }
     }
 
-    companion object {
+    /*companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(
@@ -100,5 +102,5 @@ class PokeDetailViewModel(
                 return PokeDetailViewModel(pokeDetailService, context) as T
             }
         }
-    }
+    }*/
 }

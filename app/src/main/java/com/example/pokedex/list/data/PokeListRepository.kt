@@ -3,13 +3,14 @@ package com.example.pokedex.list.data
 import android.accounts.NetworkErrorException
 import android.content.Context
 import com.example.pokedex.common.data.model.Pokemon
-import com.example.pokedex.list.data.local.PokeListLocalDataSource
-import com.example.pokedex.list.data.remote.PokeListRemoteDataSource
+import com.example.pokedex.list.data.local.LocalDataSource
+import com.example.pokedex.list.data.remote.RemoteDataSource
+import javax.inject.Inject
 
 
-class PokeListRepository(
-    private val local: PokeListLocalDataSource,
-    private val remote: PokeListRemoteDataSource
+class PokeListRepository @Inject constructor(
+    private val local: LocalDataSource,
+    private val remote: RemoteDataSource
 ) {
     suspend fun getPokeList(context: Context, page: Int): Result<List<Pokemon>?> {
         return try {

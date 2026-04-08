@@ -8,21 +8,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
+import androidx.palette.graphics.Target
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import androidx.palette.graphics.Target
 import com.example.pokedexsimple.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.security.SecureRandom
+import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.round
 import kotlin.random.Random
 
-class CommonFunctions : CommonFunctionsContract {
+class CommonFunctions @Inject constructor() : CommonFunctionsContract {
     override suspend fun getDominantColorFromImage(
         context: Context,
         imageUrl: String?,

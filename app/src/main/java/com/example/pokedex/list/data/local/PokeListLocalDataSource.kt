@@ -13,12 +13,13 @@ import com.example.pokedex.common.data.local.PokemonDao
 import com.example.pokedex.common.data.local.PokemonEntity
 import com.example.pokedex.common.data.model.Pokemon
 import java.io.File
+import javax.inject.Inject
 
-class PokeListLocalDataSource(
+class PokeListLocalDataSource @Inject constructor(
     private val dao: PokemonDao
-) {
+): LocalDataSource {
 
-    suspend fun updateLocalPokemonsList(pokemons: List<Pokemon>, context: Context, page: Int) {
+    override suspend fun updateLocalPokemonsList(pokemons: List<Pokemon>, context: Context, page: Int) {
         pokemons.map {
             insertOrUpdatePokemon(
                 pokemon = PokemonEntity(
@@ -34,12 +35,12 @@ class PokeListLocalDataSource(
         }
     }
 
-    suspend fun getPokeCount(): Int {
+    override suspend fun getPokeCount(): Int {
         return dao.getPokeCount()
     }
 
 
-    suspend fun getPokemonList(page: Int): List<Pokemon> {
+    override fun getPokemonList(page: Int): List<Pokemon> {
         val pokemonsEntities = dao.getThisPagePokemons(page = page)
         return pokemonsEntities.map {
             Pokemon(

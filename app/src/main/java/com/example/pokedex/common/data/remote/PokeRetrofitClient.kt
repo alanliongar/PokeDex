@@ -1,4 +1,8 @@
+
 package com.example.pokedex.common.data.remote
+/*
+//Esse arquivo foi desativado, pois foi necessário fazer a gestão disso no hilt (NetworkModule), pq são dois retrofits,
+//entao o hilt tem q ter seus qualifiers pra saber qual é qual.
 
 import com.example.pokedexsimple.BuildConfig
 import okhttp3.OkHttpClient
@@ -42,4 +46,4 @@ object RetrofitOpenAI {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-}
+}*/

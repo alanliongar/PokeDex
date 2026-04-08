@@ -5,11 +5,12 @@ import android.content.Context
 import androidx.compose.ui.graphics.Color
 import com.example.pokedex.common.data.model.Pokemon
 import com.example.pokedex.common.data.remote.model.CommonFunctions
+import javax.inject.Inject
 
-class PokeListRemoteDataSource(
+class PokeListRemoteDataSource @Inject constructor(
     private val pokeListService: PokeListService
-) {
-    suspend fun getPokeList(context: Context, page: Int): Result<List<Pokemon>?> {
+): RemoteDataSource {
+    override suspend fun getPokeList(context: Context, page: Int): Result<List<Pokemon>?> {
         return try {
             val result =
                 pokeListService.getPokemonList(offset = CommonFunctions().calculateOffset(page))

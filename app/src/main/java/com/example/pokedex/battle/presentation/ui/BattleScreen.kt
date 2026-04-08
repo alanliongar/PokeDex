@@ -16,19 +16,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.pokedex.battle.presentation.AIPokeBattleViewModel
 import com.example.pokedex.common.ui.LoadingScreen
 import com.example.pokedex.common.ui.PokeErrorImage
 import com.example.pokedex.common.ui.PokeTitleImage
 
+//fazer o botão popback com arrowback.
 @Composable
 fun BattleScreen(
     modifier: Modifier = Modifier,
-    battleViewModel: AIPokeBattleViewModel,
+    battleViewModel: AIPokeBattleViewModel = hiltViewModel(),
     pokeNameOne: String,
     pokeNameTwo: String,
-    navController: NavController
+    navController: NavHostController
 ) {
     battleViewModel.fetchBattleResult(pokeNameOne, pokeNameTwo)
     val battleUiState = battleViewModel.pokemonBattleResult.collectAsState().value
@@ -39,7 +41,7 @@ fun BattleScreen(
 private fun BattleContent(
     modifier: Modifier = Modifier,
     battleUiState: BattleUiState,
-    navController: NavController
+    navController: NavHostController
 ) {
     Column(
         modifier = Modifier
@@ -49,10 +51,10 @@ private fun BattleContent(
         if (battleUiState.isError == true) {
             PokeErrorImage(battleUiState.errorMessage)
         } else if (battleUiState.isLoading == true) {
-            PokeTitleImage()
+            PokeTitleImage(navHostController = navController)
             LoadingScreen()
         } else {
-            PokeTitleImage()
+            PokeTitleImage(navHostController = navController)
             Box(
                 modifier = modifier
                     .fillMaxSize()
@@ -73,5 +75,4 @@ private fun BattleContent(
             }
         }
     }
-
 }
