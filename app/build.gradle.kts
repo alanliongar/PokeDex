@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.compose.compiler)
     id("com.android.application")
@@ -9,12 +11,28 @@ android {
     namespace = "com.example.pokedexsimple"
     compileSdk = 34
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.example.pokedexsimple"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        val localProperties = project.rootProject.file("local.properties")
+        val properties = Properties()
+        properties.load(localProperties.inputStream())
+
+        val apiKey = properties.getProperty("API_KEY")
+
+        buildConfigField(
+            type = "String",
+            name = "API_KEY",
+            value = apiKey
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

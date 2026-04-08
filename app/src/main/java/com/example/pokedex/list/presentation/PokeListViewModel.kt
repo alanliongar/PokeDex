@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
+import kotlin.collections.plus
 
 class PokeListViewModel(
     private val repository: PokeListRepository,
@@ -30,8 +31,9 @@ class PokeListViewModel(
     private var endReached = false
     private val _uiPokemonsList = MutableStateFlow(PokeListUiState())
     val uiPokemonsList: StateFlow<PokeListUiState> = _uiPokemonsList
+    private val _selectedPokemons = MutableStateFlow<List<PokemonUiData>>(emptyList())
 
-
+    val selectedPokemons: StateFlow<List<PokemonUiData>> = _selectedPokemons
 
     fun loadMorePokemons() {
         Log.d(
@@ -126,6 +128,18 @@ class PokeListViewModel(
             } finally {
                 isRequestInFlight = false
             }
+        }
+    }
+
+    fun toggleSelection(pokemon: PokemonUiData, isSelected: Boolean) {
+        _selectedPokemons.value = if (isSelected) {
+            if (_selectedPokemons.value.size < 2) {
+                _selectedPokemons.value + pokemon
+            } else {
+                _selectedPokemons.value
+            }
+        } else {
+            _selectedPokemons.value - pokemon
         }
     }
 

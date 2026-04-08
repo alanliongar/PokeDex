@@ -33,9 +33,10 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.example.pokedex.common.data.remote.model.CommonFunctions
+import com.example.pokedex.common.ui.LoadingScreen
+import com.example.pokedex.common.ui.PokeErrorImage
+import com.example.pokedex.common.ui.PokeTitleImage
 import com.example.pokedex.detail.presentation.PokeDetailViewModel
-import com.example.pokedex.list.presentation.ui.LoadingScreen
-import com.example.pokedex.list.presentation.ui.PokeErrorImage
 
 
 @Composable
@@ -78,7 +79,14 @@ private fun PokeDetailContent(
 
     when {
         pokemonDetailUiState.isLoading -> {
-            LoadingScreen()
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                PokeTitleImage()
+                LoadingScreen()
+            }
         }
 
         pokemonDetailUiState.isError -> {
@@ -98,6 +106,7 @@ private fun PokeDetailContent(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    PokeTitleImage()
                     Text(
                         text = pokemon?.name.orEmpty()
                             .replaceFirstChar { it.uppercase() },
@@ -211,14 +220,19 @@ private fun PokeDetailContent(
                         "XP" to (pokemon?.baseExperience ?: 0)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = "Base Stats", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = textColor ?: Color.Black)
+                    Text(
+                        text = "Base Stats",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = textColor ?: Color.Black
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     stats.forEach { (name, value) ->
                         StatBar(
                             statName = name,
                             currentValue = value,
-                            textColor = textColor?:Color.Black,
+                            textColor = textColor ?: Color.Black,
                             color = CommonFunctions().getBarColor(name, context),
                             maxValue = if (name == "XP") 1000 else 300
                         )
@@ -230,7 +244,13 @@ private fun PokeDetailContent(
 }
 
 @Composable
-private fun StatBar(statName: String, currentValue: Int, color: Color, maxValue: Int, textColor: Color) {
+private fun StatBar(
+    statName: String,
+    currentValue: Int,
+    color: Color,
+    maxValue: Int,
+    textColor: Color
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -244,7 +264,7 @@ private fun StatBar(statName: String, currentValue: Int, color: Color, maxValue:
         ) {
             Text(
                 text = statName,
-                fontWeight = FontWeight.SemiBold, color=textColor
+                fontWeight = FontWeight.SemiBold, color = textColor
             )
         }
 

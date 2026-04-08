@@ -1,10 +1,10 @@
 package com.example.pokedex.list.presentation.ui
 
-import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,10 +18,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,27 +37,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.ImageLoader
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
-import coil.size.Size
 import com.example.pokedexsimple.R
 import com.example.pokedex.common.data.remote.model.CommonFunctions
+import com.example.pokedex.common.ui.GifImage
+import com.example.pokedex.common.ui.LoadingScreen
+import com.example.pokedex.common.ui.PokeErrorImage
+import com.example.pokedex.common.ui.PokeTitleImage
 import com.example.pokedex.list.presentation.PokeListViewModel
 import kotlin.random.Random
 
@@ -67,20 +65,48 @@ fun PokeListScreen(
     pokeListViewModel: PokeListViewModel,
 ) {
     val pokemons by pokeListViewModel.uiPokemonsList.collectAsState()
-    PokeListContent(
-        pokeListUiState = pokemons,
-        onClick = { pokeItemClicked ->
-            navController.navigate("pokemonDetail/${pokeItemClicked.id}")
-        }, onLoadMore = {
-            pokeListViewModel.loadMorePokemons()
+    val selectedPokemons = pokeListViewModel.selectedPokemons.collectAsState().value
+
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        PokeListContent(
+            pokeListUiState = pokemons,
+            onClick = { pokeItemClicked ->
+                navController.navigate("pokemonDetail/${pokeItemClicked.id}")
+            }, onLoadMore = {
+                pokeListViewModel.loadMorePokemons()
+            }, onSelectionChange = { pokemon, isSelected ->
+                pokeListViewModel.toggleSelection(pokemon, isSelected)
+            },selectedPokemons = selectedPokemons
+        )
+
+        if (selectedPokemons.size == 2) {
+            IconButton(
+                onClick = {
+                    navController.navigate("battle_screen/${selectedPokemons[0].name}/${selectedPokemons[1].name}")
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
+                    .size(130.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.sword_battle_dark else R.drawable.sword_battle),
+                    contentDescription = "Check the battle",
+                    modifier = Modifier.size(100.dp)
+                )
+            }
         }
-    )
+    }
+
 }
 
 @Composable
 private fun PokeListContent(
     pokeListUiState: PokeListUiState,
     onClick: (PokemonUiData) -> Unit,
+    onSelectionChange: (PokemonUiData, Boolean) -> Unit,
+    selectedPokemons: List<PokemonUiData>,
     onLoadMore: () -> Unit
 ) {
     val isLoading = pokeListUiState.isInitialLoading
@@ -102,15 +128,21 @@ private fun PokeListContent(
                 pokeListUiState = pokeListUiState,
                 onCardClick = onClick,
                 onLoadMore = onLoadMore,
+                onSelectionChange = onSelectionChange,
+                selectedPokemons = selectedPokemons,
             )
         }
     }
 }
 
+
+
 @Composable
 fun PokeGrid(
     pokeListUiState: PokeListUiState,
+    selectedPokemons: List<PokemonUiData>,
     onCardClick: (PokemonUiData) -> Unit,
+    onSelectionChange: (PokemonUiData, Boolean) -> Unit,
     onLoadMore: () -> Unit
 ) {
     val gridState = rememberLazyGridState()
@@ -143,8 +175,14 @@ fun PokeGrid(
         items(items = pokeListUiState.pokemonUiDataList,
             key = { it.id?.toString() ?: it.name.orEmpty() }
             ) { pokemon ->
-            PokeCard(pokemon, onClick = onCardClick)
+            PokeCard(pokemonUiData = pokemon,
+                onClick = onCardClick,
+                isSelected = selectedPokemons.contains(pokemon),
+                onSelectionChange = onSelectionChange
+            )
         }
+
+        /*onSelectionChange: (PokemonUiData, Boolean) -> Unit*/
 
         if(pokeListUiState.isAppending){
             item(span = { GridItemSpan(2) }){
@@ -159,7 +197,9 @@ fun PokeGrid(
 @Composable
 private fun PokeCard(
     pokemonUiData: PokemonUiData,
-    onClick: (PokemonUiData) -> Unit
+    isSelected: Boolean,
+    onClick: (PokemonUiData) -> Unit,
+    onSelectionChange: (PokemonUiData, Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     var isLoading by remember { mutableStateOf(true) }
@@ -182,6 +222,8 @@ private fun PokeCard(
         cardColor = dominantColorCardAndText.first ?: pokemonUiData.color ?: Color.Gray
         isLoading = false
     }
+
+
     Column(
         modifier = Modifier
             .fillMaxWidth().padding(5.dp)
@@ -193,39 +235,74 @@ private fun PokeCard(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (isLoading) {
-            LoadingScreen()
-        } else {
-            if (imageUrl.endsWith(".svg")) {
-                val imageLoader = ImageLoader.Builder(LocalContext.current).components {
-                    add(SvgDecoder.Factory())
+        Box(
+            modifier = Modifier
+                .width(150.dp)
+                .height(150.dp)
+                .clickable { onClick(pokemonUiData) }
+        ) {
+            if (isLoading) {
+                LoadingScreen()
+            }else{
+                if (LocalInspectionMode.current) {
+                    Image(
+                        painter = painterResource(id = R.drawable.floragato),
+                        contentDescription = pokemonUiData.name,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    if (imageUrl.endsWith(".svg")) {
+                        val imageLoader = ImageLoader.Builder(LocalContext.current).components {
+                            add(SvgDecoder.Factory())
+                        }
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(imageUrl)
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = if (imageUrl.endsWith(".svg")) null else pokemonUiData.name,
+                            modifier = Modifier
+                                .width(150.dp)
+                                .height(150.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                    } else {
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = pokemonUiData.name,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .width(150.dp)
+                                .height(150.dp)
+                        )
+                    }
                 }
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(imageUrl)
-                        .decoderFactory(SvgDecoder.Factory())
-                        .build(),
-                    contentDescription = if (imageUrl.endsWith(".svg")) null else pokemonUiData.name,
+                Image(
+                    painter = painterResource(
+                        if (isSelected) {
+                            if (isSystemInDarkTheme()) R.drawable.sword_selected_dark else R.drawable.sword_selected
+                        } else {
+                            if (isSystemInDarkTheme()) R.drawable.sword_unselected_dark else R.drawable.sword_unselected
+                        }
+                    ),
+                    contentDescription = "Selecionado",
                     modifier = Modifier
-                        .width(150.dp)
-                        .height(150.dp),
-                    contentScale = ContentScale.Fit
+                        .size(60.dp)
+                        .align(Alignment.TopEnd)
+                        .padding(4.dp)
+                        .clickable {
+                            onSelectionChange(
+                                pokemonUiData,
+                                !isSelected
+                            )
+                        }
                 )
-            } else {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = pokemonUiData.name,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .width(150.dp)
-                        .height(150.dp)
-                )
+
+
             }
-        }
-
-        // Espaço entre a imagem e o nome
+    }
         Spacer(modifier = Modifier.height(8.dp))
-
         // Exibe o nome do Pokémon
         Text(
             text = pokemonUiData.name.toString().replaceFirstChar { it.uppercaseChar() },
@@ -236,127 +313,9 @@ private fun PokeCard(
     }
 }
 
-@Composable
-fun PokeErrorImage(errorMsg: String? = null) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            fontSize = 36.sp,
-            modifier = Modifier.padding(16.dp),
-            color = Color.Red,
-            text = "Ohh No!",
-            fontWeight = FontWeight.Bold
-        )
-        Image(
-            painter = painterResource(id = R.drawable.error_background),
-            contentDescription = "Imagem de erro",
-            modifier = Modifier
-                .width(432.dp)
-                .height(577.dp),
-            contentScale = ContentScale.FillHeight
-        )
-        Text(
-            fontSize = 32.sp,
-            modifier = Modifier.padding(16.dp),
-            color = Color.Red,
-            text = "Something went wrong!",
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            fontSize = 20.sp,
-            modifier = Modifier.padding(16.dp),
-            color = Color.Blue,
-            text = errorMsg ?: "Go back and try again",
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Composable
-fun LoadingScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            GifImage(
-                modifier = Modifier
-                    .size(240.dp)
-                    .clip(CircleShape)
-                    .scale(1.0f)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Loading...",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF302697)
-            )
-        }
-    }
-}
 
 
-@Composable
-fun GifImage(
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
 
-    if (LocalInspectionMode.current) {
-        Image(
-            painter = painterResource(R.drawable.loadingpokemon),
-            contentDescription = null,
-            modifier = modifier
-        )
-        return
-    }
-
-    val imageLoader = ImageLoader.Builder(context)
-        .components {
-            if (SDK_INT >= 28) {
-                add(ImageDecoderDecoder.Factory())
-            } else {
-                add(GifDecoder.Factory())
-            }
-        }
-        .build()
-
-    Image(
-        painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(context)
-                .data(R.drawable.loadingpokemon)
-                .size(Size.ORIGINAL)
-                .build(),
-            imageLoader = imageLoader
-        ),
-        contentDescription = null,
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun PokeTitleImage() {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.pokedex_logo),
-            contentDescription = "Imagem escrito Pokedex",
-            modifier = Modifier
-                .width(250.dp)
-                .height(90.dp),
-            contentScale = ContentScale.FillBounds
-        )
-    }
-}
 
 @Composable
 fun LoadingMoreFooter() {
@@ -528,13 +487,5 @@ private fun LoadingFooterHorizontal() {
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(text = "Loading more...")
-    }
-}
-
-@Preview (showBackground = false)
-@Composable()
-private fun LoadingScreenPreview() {
-    MaterialTheme{
-        LoadingScreen()
     }
 }
