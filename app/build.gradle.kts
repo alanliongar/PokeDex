@@ -10,7 +10,7 @@ plugins {
 }
 android {
     namespace = "com.example.pokedexsimple"
-    compileSdk = 34
+    compileSdk = 35
 
     buildFeatures {
         buildConfig = true
@@ -19,7 +19,7 @@ android {
     defaultConfig {
         applicationId = "com.example.pokedexsimple"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -71,6 +71,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.runtime.saveable)
+    implementation(libs.androidx.compose.animation.core)
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
@@ -83,6 +85,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:$coil_version")
     implementation("io.coil-kt:coil-gif:$coil_version")
     implementation("io.coil-kt:coil-svg:$coil_version")
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.palette:palette-ktx:1.0.0")

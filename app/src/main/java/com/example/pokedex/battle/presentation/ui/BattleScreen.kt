@@ -23,7 +23,6 @@ import com.example.pokedex.common.ui.LoadingScreen
 import com.example.pokedex.common.ui.PokeErrorImage
 import com.example.pokedex.common.ui.PokeTitleImage
 
-//fazer o botão popback com arrowback.
 @Composable
 fun BattleScreen(
     modifier: Modifier = Modifier,

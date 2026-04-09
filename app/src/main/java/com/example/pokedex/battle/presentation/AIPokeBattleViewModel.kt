@@ -42,7 +42,7 @@ class AIPokeBattleViewModel @Inject constructor(
                 _pokemonBattleResult.value = BattleUiState(
                     battle = formatBattleText(battleResult.getOrNull() ?: "Erro ao gerar batalha!"),
                     isLoading = false,
-                    isError = false
+                    isError = false,
                 )
             } else {
                 Log.e(
@@ -87,7 +87,7 @@ class AIPokeBattleViewModel @Inject constructor(
             }
         }
     }
-
+}
 
     /*companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -102,4 +102,3 @@ class AIPokeBattleViewModel @Inject constructor(
             }
         }
     }*/
-}

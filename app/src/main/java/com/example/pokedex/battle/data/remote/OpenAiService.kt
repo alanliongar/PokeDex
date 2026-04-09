@@ -1,4 +1,4 @@
-package com.example.pokedex.battle.data
+package com.example.pokedex.battle.data.remote
 
 import com.example.pokedex_hacksprint_2025.battle.data.model.OpenAiRequest
 import com.example.pokedex_hacksprint_2025.battle.data.model.OpenAiResponse

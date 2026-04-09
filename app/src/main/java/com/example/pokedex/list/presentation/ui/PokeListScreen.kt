@@ -128,7 +128,7 @@ private fun PokeListContent(
             PokeTitleImage()
             LoadingScreen()
         } else {
-            PokeTitleImage()
+            PokeTitleImage(showSearchAction = true)
             PokeGrid(
                 pokeListUiState = pokeListUiState,
                 onCardClick = onClick,

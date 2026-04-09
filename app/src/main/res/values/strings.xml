@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">PokeDex</string>
+        <string name="ai_battle_system_role">Você é um narrador especialista em batalhas Pokémon.</string>
+
+        <string name="ai_battle_prompt">
+        Simule uma batalha rápida entre %1$s e %2$s.
+        Explique em no máximo 3 frases quem vence e por quê (narrativa no tempo presente),
+        considerando vantagens de tipo e poder de ataque.
+
+        ✅ IMPORTANTE:
+        - Cada frase deve ser separada por duas quebras de linha (\n\n).
+        - Retorne o texto já formatado corretamente, para exibição direta na tela.
+        - Mantenha o tom narrativo e envolvente, usando emojis para representar os Pokémon e os golpes.
+    </string>
+
+    <string name="ai_battle_result_prefix">🔥 Resultado da batalha:\n\n%1$s</string>
+    <string name="ai_battle_error_generate">Erro ao gerar batalha.</string>
+    <string name="ai_battle_error_unknown">Erro desconhecido.</string>
+    <string name="ai_battle_error_request">❌ Requisition error: %1$s</string>
+    <string name="ai_battle_error_unexpected">🚨 Unexpected error: %1$s</string>
+    <string name="battle_log_tag">BattleUiErrorPokedex</string>
+
 </resources>

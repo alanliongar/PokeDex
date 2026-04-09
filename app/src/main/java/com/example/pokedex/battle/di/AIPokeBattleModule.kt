@@ -1,6 +1,6 @@
 package com.example.pokedex.battle.di
 
-import com.example.pokedex.battle.data.OpenAiService
+import com.example.pokedex.battle.data.remote.OpenAiService
 import com.example.pokedex.di.OpenAiRetrofit
 import dagger.Module
 import dagger.Provides
