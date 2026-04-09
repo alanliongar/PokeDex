@@ -4,6 +4,7 @@ Pokedex is an Android application that allows users to explore Pokémon, retriev
 Features
 - Pokémon List: View an updated list of Pokémon.
 - Pokémon Details: Access detailed information about each Pokémon, such as name, abilities, physical attributes, and dynamic images.
+- Pokémon AI Battle: A Funny thing implemented with IA, battle in text.
 - Intuitive Interface: Easy navigation and clean design for a better user experience.
 
 ## :camera_flash: Screenshots
@@ -35,6 +36,10 @@ Features
 - Palette: Extracts the dominant color from character images and applies it to the card backgrounds for a cohesive UI
 - Retrofit
 - Pokémon API
+- Dependency Injection
+  - Dagger/Hilt
+- Artificial Inteligence (AI)
+  - OpenAI API
 - Unit Tests
   - Mockito-Kotlin
   - Turbine
