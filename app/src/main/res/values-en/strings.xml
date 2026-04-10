@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">PokeDex</string>
+    <string name="ai_battle_system_role">You are a narrator specialized in Pokémon battles.</string>
+        <string name="ai_battle_prompt">
+        Simulate a quick battle between %1$s and %2$s.
+        Explain in no more than 4 sentences who wins and why (present-tense narrative),
+        considering type advantages and attack power.
+
+        ✅ IMPORTANT:
+        - Separate each sentence with two line breaks (\n\n), this is very important, please send the line breaks!!!.
+        - Return the text already formatted correctly for direct display on the screen.
+        - Keep the tone narrative and engaging, using emojis to represent the Pokémon and their moves.
+        </string>
+
+    <string name="ai_battle_result_prefix">🔥 Battle Result\n\n%1$s</string>
+    <string name="ai_battle_error_generate">Error on generate battle.</string>
+    <string name="ai_battle_error_unknown">Unknown error.</string>
+    <string name="ai_battle_error_request">❌ Requisition error: %1$s</string>
+    <string name="ai_battle_error_unexpected">🚨 Unexpected error: %1$s</string>
+    <string name="battle_log_tag">BattleUiErrorPokedex</string>-->
+
+</resources>
