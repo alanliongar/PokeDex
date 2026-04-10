@@ -9,13 +9,10 @@ Features
 
 ## :camera_flash: Screenshots
 <p float="left">
-  <img src="https://github.com/user-attachments/assets/4b4e4b1b-0b6e-46f2-8520-ab413a9d90f7" width="250" />
-  <img src="https://github.com/user-attachments/assets/564453a8-b678-42bf-8912-ae6f89abd63c" width="250" /> 
-  <img src="https://github.com/user-attachments/assets/451c7df1-535e-4a23-af8a-43a38fc6be81" width="250" /> 
-  <br>
-  <img src="https://github.com/user-attachments/assets/596ffe53-563a-4719-b0b1-6234056ef889" width="250" /> 
-  <img src="https://github.com/user-attachments/assets/25d7b220-56ff-447d-ab92-68cff546e34b" width="250" /> 
-  <img src="https://github.com/user-attachments/assets/74981239-a508-45fc-ae7d-0740df97192c" width="250" /> 
+  <img src="https://github.com/user-attachments/assets/487b755d-6ba6-4fcf-bf56-9ddb2be90289" width="249" />
+  <img src="https://github.com/user-attachments/assets/e75a7678-849b-4d74-9940-01a3fdcbb845" width="249" /> 
+  <img src="https://github.com/user-attachments/assets/4b4548ad-2d36-419c-88a2-04e577a4993a" width="249" /> 
+  <img src="https://github.com/user-attachments/assets/bf9fb4ae-d6c5-4261-a29f-5995ccf0a3b0" width="249" /> 
 </p>
 
 ## Technologies
