@@ -5,7 +5,7 @@
         <string name="ai_battle_prompt">
         Simule uma batalha rápida entre %1$s e %2$s.
         Explique em no máximo 4 frases quem vence e por quê (narrativa no tempo presente),
-        considerando vantagens de tipo e poder de ataque.
+        considerando vantagens de tipo, **nível** e poder de ataque.
 
         ✅ IMPORTANTE:
         - Cada frase deve ser separada por duas quebras de linha (\n\n), Isso é muito importante, por favor envie as quebras de linha!!!.

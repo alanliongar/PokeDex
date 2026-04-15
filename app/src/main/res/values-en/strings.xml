@@ -4,7 +4,7 @@
         <string name="ai_battle_prompt">
         Simulate a quick battle between %1$s and %2$s.
         Explain in no more than 4 sentences who wins and why (present-tense narrative),
-        considering type advantages and attack power.
+        considering type and level advantages and attack power.
 
         ✅ IMPORTANT:
         - Separate each sentence with two line breaks (\n\n), this is very important, please send the line breaks!!!.
