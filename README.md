@@ -12,7 +12,7 @@ Features
   <img src="https://github.com/user-attachments/assets/bf9fb4ae-d6c5-4261-a29f-5995ccf0a3b0" width="206" />
   <img src="https://github.com/user-attachments/assets/e75a7678-849b-4d74-9940-01a3fdcbb845" width="206" />
   <img src="https://github.com/user-attachments/assets/4b4548ad-2d36-419c-88a2-04e577a4993a" width="206" />
-  <img src="https://github.com/user-attachments/assets/487b755d-6ba6-4fcf-bf56-9ddb2be90289" width="207" />
+  <img src="https://github.com/user-attachments/assets/487b755d-6ba6-4fcf-bf56-9ddb2be90289" width="206" />
 </p>
 
 ## Technologies
